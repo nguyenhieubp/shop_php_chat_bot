@@ -1,0 +1,1 @@
+{"status":200,"messages":[{"type":"text","text":"Xin l\u1ed7i, t\u00f4i kh\u00f4ng hi\u1ec3u \u00fd b\u1ea1n. H\u00e3y g\u00f5 \"b\u1eaft \u0111\u1ea7u\" \u0111\u1ec3 t\u00ecm ki\u1ebfm s\u1ea3n ph\u1ea9m v\u00e0 \u0111\u1eb7t h\u00e0ng nh\u00e9! \u2728","attachment":null,"additionalParameters":[]}]}
