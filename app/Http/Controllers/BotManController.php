@@ -22,9 +22,24 @@ class BotManController extends Controller
         $botman = app('botman');
 
         $botman->hears('^(init|hi|hello|clear)$', function (BotMan $bot) use ($request) {
-            $question = Question::create(BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Cosmetic Store! 🌸'))
+            $question = Question::create(BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕'))
                 ->addButtons([
                     Button::create(BotSetting::get('bot_start_btn', 'Bắt đầu'))->value('start'),
+                ]);
+            $bot->reply($question);
+        });
+
+        $botman->hears('^(start|bắt đầu|chào|menu)$', function (BotMan $bot) use ($request) {
+            $request->session()->forget(['botman_step', 'botman_state']);
+            $question = Question::create(BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?'))
+                ->addButtons([
+                    Button::create(BotSetting::get('bot_shopping_btn', '🚀 Bắt đầu mua sắm'))->value('start_fast'),
+                    Button::create('👔 Tư vấn chọn size')->value('start_consultation'),
+                    Button::create(BotSetting::get('bot_search_btn', '🔍 Tìm sản phẩm'))->value('ask_search'),
+                    Button::create(BotSetting::get('bot_track_btn', '📦 Tra cứu đơn hàng'))->value('track_order'),
+                    Button::create(BotSetting::get('bot_blog_btn', '📝 Đọc Blog'))->value('view_blog'),
+                    Button::create(BotSetting::get('bot_feedback_btn', '📧 Gửi góp ý'))->value('send_feedback'),
+                    Button::create(BotSetting::get('bot_contact_btn', '📞 Liên hệ'))->value('contact_info'),
                 ]);
             $bot->reply($question);
         });
@@ -70,18 +85,18 @@ class BotManController extends Controller
             }
         });
 
-        $botman->hears('^(start|bắt đầu|chào|menu)$', function (BotMan $bot) use ($request) {
-            $request->session()->forget(['botman_step', 'botman_state']);
-            $question = Question::create(BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?'))
-                ->addButtons([
-                    Button::create(BotSetting::get('bot_shopping_btn', '🚀 Bắt đầu mua sắm'))->value('start_fast'),
-                    Button::create(BotSetting::get('bot_search_btn', '🔍 Tìm sản phẩm'))->value('ask_search'),
-                    Button::create(BotSetting::get('bot_track_btn', '📦 Tra cứu đơn hàng'))->value('track_order'),
-                    Button::create(BotSetting::get('bot_blog_btn', '📝 Đọc Blog'))->value('view_blog'),
-                    Button::create(BotSetting::get('bot_feedback_btn', '📧 Gửi góp ý'))->value('send_feedback'),
-                    Button::create(BotSetting::get('bot_contact_btn', '📞 Liên hệ'))->value('contact_info'),
-                ]);
-            $bot->reply($question);
+        // Dedicated Buy Now Handler
+        $botman->hears('buy_now_{id}', function (BotMan $bot, $id) use ($request) {
+            $product = \App\Models\Product::find($id);
+            if (!$product) {
+                return $bot->reply('Rất tiếc, sản phẩm này hiện không khả dụng.');
+            }
+
+            $request->session()->put('botman_step', 'askName');
+            $request->session()->put('botman_state', ['selectedProductId' => $id]);
+            
+            $bot->reply('Tuyệt vời! Bạn chọn: ' . $product->name);
+            $bot->reply(BotSetting::get('bot_ask_name', 'Vui lòng cho biết tên của bạn:'));
         });
 
         $botman->hears('ask_search', function (BotMan $bot) use ($request) {
@@ -92,7 +107,7 @@ class BotManController extends Controller
 
         $botman->hears('track_order', function (BotMan $bot) use ($request) {
             $request->session()->put('botman_step', 'askTrackPhone');
-            $bot->reply('Vui lòng nhập số điện thoại bạn đã dùng để đặt hàng:');
+            $bot->reply(BotSetting::get('bot_ask_track_phone', 'Vui lòng nhập số điện thoại bạn đã dùng để đặt hàng:'));
         });
 
         $botman->hears('view_blog', function (BotMan $bot) use ($request) {
@@ -104,17 +119,30 @@ class BotManController extends Controller
             foreach ($posts as $post) {
                 $bot->reply("📖 " . $post->title . "\nLink: " . route('blog.show', $post->slug));
             }
-            $bot->reply('Gõ "menu" để quay lại.');
+            $bot->reply(BotSetting::get('bot_back_menu_msg', 'Gõ "menu" để quay lại.'));
         });
 
         $botman->hears('send_feedback', function (BotMan $bot) use ($request) {
             $request->session()->put('botman_step', 'askFeedback');
-            $bot->reply('Chào bạn, chúng tôi luôn lắng nghe ý kiến từ khách hàng. Vui lòng nhập nội dung góp ý của bạn:');
+            $bot->reply(BotSetting::get('bot_feedback_intro', 'Chào bạn, chúng tôi luôn lắng nghe ý kiến từ khách hàng. Vui lòng nhập nội dung góp ý của bạn:'));
         });
 
         $botman->hears('contact_info', function (BotMan $bot) use ($request) {
             $bot->reply("📍 Địa chỉ: 123 Đường Sắc Đẹp, Quận 1, TP.HCM\n📞 Hotline: 1900 1234\n🌐 Website: " . url('/') . "\n📧 Email: support@cosmeticstore.com");
-            $bot->reply('Gõ "menu" để quay lại.');
+            $bot->reply(BotSetting::get('bot_back_menu_msg', 'Gõ "menu" để quay lại.'));
+        });
+
+        $botman->hears('start_consultation', function (BotMan $bot) use ($request) {
+            $request->session()->put('botman_state', ['flow' => 'consultation']);
+            $request->session()->put('botman_step', 'askGender');
+            
+            $question = Question::create(BotSetting::get('bot_consultation_intro', 'Chào bạn! Để tôi tư vấn size chuẩn nhất, bạn vui lòng cho tôi biết giới tính của mình nhé:'))
+                ->addButtons([
+                    Button::create('Nam')->value('Nam'),
+                    Button::create('Nữ')->value('Nữ'),
+                    Button::create('Unisex/Khác')->value('Unisex'),
+                ]);
+            $bot->reply($question);
         });
 
         $botman->hears('start_fast', function (BotMan $bot) use ($request) {
@@ -143,9 +171,10 @@ class BotManController extends Controller
             $resetCommands = ['hi', 'hello', 'start', 'bắt đầu', 'start_order', 'start_fast', 'chào', 'clear'];
             if (in_array(strtolower($message), $resetCommands) || in_array($value, $resetCommands)) {
                 $request->session()->forget(['botman_step', 'botman_state']);
-                $question = Question::create('Cosmetic Store xin chào! 🌸')
+                $question = Question::create('Fashion Hub xin chào! 👕')
                     ->addButtons([
                         Button::create('🚀 Bắt đầu mua sắm ngay')->value('start_fast'),
+                        Button::create('👔 Tư vấn chọn size')->value('start_consultation'),
                     ]);
                 return $bot->reply($question);
             }
@@ -154,18 +183,10 @@ class BotManController extends Controller
                 $question = Question::create('Xin chào! Tôi có thể giúp gì cho bạn?')
                     ->addButtons([
                         Button::create('🚀 Bắt đầu mua sắm')->value('start_fast'),
+                        Button::create('👔 Tư vấn chọn size')->value('start_consultation'),
                         Button::create('🔍 Tìm sản phẩm')->value('ask_search'),
                     ]);
                 return $bot->reply($question);
-            }
-
-            // Start Fast flow (handled by hears('start_fast') now, but keep here just in case of race conditions)
-            if ($value === 'start_fast') {
-                return; // Let the hears handler take it
-            }
-
-            if ($value === 'ask_search') {
-                return; // Let the hears handler take it
             }
 
             if ($value === 'back') {
@@ -179,12 +200,7 @@ class BotManController extends Controller
                     'confirmOrder' => 'askAddress',
                 ];
                 $step = $prevSteps[$step] ?? 'askSearch';
-
-                // Override if in search flow
-                if ($step === 'askPrice' && ($state['flow'] ?? '') === 'search') {
-                    $step = 'askSearch';
-                }
-
+                if ($step === 'askPrice' && ($state['flow'] ?? '') === 'search') $step = 'askSearch';
                 $request->session()->put('botman_step', $step);
             } else {
                 // State Machine Transitions
@@ -197,9 +213,9 @@ class BotManController extends Controller
                     $phone = trim($message);
                     $orders = Order::with('product')->where('phone', $phone)->latest()->take(3)->get();
                     if ($orders->isEmpty()) {
-                        $bot->reply('Rất tiếc, tôi không tìm thấy đơn hàng nào với số điện thoại này. 😢');
+                        $bot->reply(BotSetting::get('bot_order_not_found', 'Rất tiếc, tôi không tìm thấy đơn hàng nào với số điện thoại này. 😢'));
                     } else {
-                        $bot->reply('Đây là các đơn hàng gần nhất của bạn:');
+                        $bot->reply(BotSetting::get('bot_order_list_intro', 'Đây là các đơn hàng gần nhất của bạn:'));
                         foreach ($orders as $order) {
                             $statusLabel = [
                                 'new' => 'Mới',
@@ -212,7 +228,7 @@ class BotManController extends Controller
                             $bot->reply("📦 Đơn hàng #{$order->id} ({$order->created_at->format('d/m/Y')})\nSản phẩm: {$productName}\nTrạng thái: {$statusLabel}");
                         }
                     }
-                    $bot->reply('Gõ "menu" để quay lại.');
+                    $bot->reply(BotSetting::get('bot_back_menu_msg', 'Gõ "menu" để quay lại.'));
                     $request->session()->forget(['botman_step', 'botman_state']);
                     return;
                 } elseif ($step === 'askFeedback') {
@@ -222,10 +238,23 @@ class BotManController extends Controller
                         'subject' => 'Góp ý qua Chatbot',
                         'message' => $message
                     ]);
-                    $bot->reply('Cảm ơn bạn đã đóng góp ý kiến! Cosmetic Store sẽ ghi nhận và cải thiện dịch vụ tốt hơn. ❤️');
-                    $bot->reply('Gõ "menu" để quay lại.');
+                    $bot->reply(BotSetting::get('bot_feedback_thanks', 'Cảm ơn bạn đã đóng góp ý kiến! Fashion Hub sẽ ghi nhận và cải thiện dịch vụ tốt hơn. ❤️'));
+                    $bot->reply(BotSetting::get('bot_back_menu_msg', 'Gõ "menu" để quay lại.'));
                     $request->session()->forget(['botman_step', 'botman_state']);
                     return;
+                } elseif ($step === 'askGender') {
+                    $state['gender'] = $value;
+                    $step = 'askHeight';
+                } elseif ($step === 'askHeight') {
+                    $height = (int) $message;
+                    if ($height < 100 || $height > 250) return $bot->reply('Vui lòng nhập chiều cao thật của bạn (VD: 170):');
+                    $state['height'] = $height;
+                    $step = 'askWeight';
+                } elseif ($step === 'askWeight') {
+                    $weight = (int) $message;
+                    if ($weight < 30 || $weight > 200) return $bot->reply('Vui lòng nhập cân nặng thật của bạn (VD: 65):');
+                    $state['weight'] = $weight;
+                    $step = 'showConsultation';
                 } elseif ($step === 'askCategory') {
                     $state['selectedCategory'] = $value;
                     $step = 'askPrice';
@@ -233,8 +262,7 @@ class BotManController extends Controller
                     $state['selectedPrice'] = $value;
                     $step = 'askProduct';
                 } elseif ($step === 'askProduct') {
-                    $state['selectedProductId'] = $value;
-                    $step = 'askName';
+                    // This is now handled by hears('buy_now_{id}')
                 } elseif ($step === 'askName') {
                     $state['customerName'] = $message;
                     $step = 'askPhone';
@@ -254,11 +282,11 @@ class BotManController extends Controller
                             'address' => $state['customerAddress'] ?? '',
                             'status' => 'new'
                         ]);
-                        $bot->reply('🎉 Cảm ơn bạn! Đơn hàng mã #' . $order->id . ' đã được ghi nhận.');
+                        $bot->reply(BotSetting::get('bot_order_success', '🎉 Cảm ơn bạn! Đơn hàng đã được ghi nhận mang mã số: #') . $order->id);
                         $request->session()->forget(['botman_step', 'botman_state']);
                         return;
                     } else {
-                        $bot->reply('Đã hủy. Hãy nhấn nút để bắt đầu lại nhé!');
+                        $bot->reply(BotSetting::get('bot_order_cancel', 'Đã hủy. Hãy nhấn nút để bắt đầu lại nhé!'));
                         $request->session()->forget(['botman_step', 'botman_state']);
                         return;
                     }
@@ -270,7 +298,56 @@ class BotManController extends Controller
             $request->session()->put('botman_state', $state);
 
             // Render Next Question
-            if ($step === 'askCategory') {
+            if ($step === 'askHeight') {
+                $bot->reply(BotSetting::get('bot_ask_height', 'Chiều cao của bạn là bao nhiêu cm? (VD: 170)'));
+            } elseif ($step === 'askWeight') {
+                $bot->reply(BotSetting::get('bot_ask_weight', 'Cân nặng của bạn là bao nhiêu kg? (VD: 65)'));
+            } elseif ($step === 'showConsultation') {
+                $bot->reply(BotSetting::get('bot_analyzing', 'Đang phân tích thông số của bạn qua hệ thống... ⏳'));
+                
+                $query = Product::where('is_active', true);
+                if ($state['gender'] !== 'Unisex') {
+                    $query->where(function($q) use ($state) {
+                        $q->where('gender', $state['gender'])
+                          ->orWhere('gender', 'Unisex');
+                    });
+                }
+                
+                $h = $state['height'];
+                $w = $state['weight'];
+                
+                $products = $query->where('min_height', '<=', $h)
+                                 ->where('max_height', '>=', $h)
+                                 ->where('min_weight', '<=', $w)
+                                 ->where('max_weight', '>=', $w)
+                                 ->take(5)->get();
+
+                if ($products->isEmpty()) {
+                    $bot->reply(BotSetting::get('bot_no_fit_found', 'Rất tiếc, tôi chưa tìm thấy sản phẩm nào có size chuẩn xác tuyệt đối cho bạn. Tuy nhiên, shop còn nhiều mẫu Oversize, bạn có thể tham khảo nhé!'));
+                    $request->session()->forget(['botman_step', 'botman_state']);
+                    return;
+                }
+
+                $bot->reply(BotSetting::get('bot_fit_results_intro', 'Dựa trên các chỉ số của bạn, đây là những mẫu áo cực kỳ vừa vặn dành cho bạn:'));
+                
+                foreach ($products as $product) {
+                    if ($product->image) {
+                        $attachment = new Image(asset($product->image));
+                        $bot->reply(OutgoingMessage::create('')->withAttachment($attachment));
+                    }
+                    $priceFormat = number_format($product->price) . 'đ';
+                    $question = Question::create("✨ *Dành cho bạn: {$product->name}*\n💰 Giá: *{$priceFormat}*")
+                        ->addButtons([
+                            Button::create('🛒 Thêm vào giỏ')->value('add_to_cart_' . $product->id),
+                            Button::create('📦 Đặt ngay')->value('buy_now_' . $product->id),
+                            Button::create('👁️ Chi tiết')->value('view_product_' . $product->id),
+                        ]);
+                    $bot->reply($question);
+                }
+                $request->session()->forget(['botman_step', 'botman_state']);
+                return;
+
+            } elseif ($step === 'askCategory') {
                 $categories = Category::all();
                 $buttons = [Button::create('Tất cả')->value('all')];
                 foreach ($categories as $cat) {
@@ -325,7 +402,7 @@ class BotManController extends Controller
                     $question = Question::create("💎 *{$product->name}*\n💰 Giá: *{$priceFormat}*")
                         ->addButtons([
                             Button::create('🛒 Thêm vào giỏ')->value('add_to_cart_' . $product->id),
-                            Button::create('📦 Đặt ngay')->value($product->id),
+                            Button::create('📦 Đặt ngay')->value('buy_now_' . $product->id),
                             Button::create('👁️ Chi tiết')->value('view_product_' . $product->id),
                         ]);
                     $bot->reply($question);
@@ -337,31 +414,23 @@ class BotManController extends Controller
                 ]);
                 $bot->reply($question);
 
-            } elseif ($step === 'askName') {
-                $product = Product::find($state['selectedProductId']);
-                if (!$product) {
-                    $bot->reply('Lỗi: Không tìm thấy sản phẩm. Vui lòng thử lại.');
-                    $request->session()->forget(['botman_step', 'botman_state']);
-                    return;
-                }
-                $bot->reply('Tuyệt vời! Bạn chọn: ' . $product->name);
-                $bot->reply('Vui lòng cho biết tên của bạn:');
+                $bot->reply(BotSetting::get('bot_ask_name', 'Vui lòng cho biết tên của bạn:'));
 
             } elseif ($step === 'askPhone') {
-                $bot->reply('Cảm ơn ' . $state['customerName'] . '. Vui lòng cho biết SĐT của bạn:');
+                $bot->reply('Cảm ơn ' . $state['customerName'] . '. ' . BotSetting::get('bot_ask_phone', 'Vui lòng cho biết SĐT của bạn:'));
 
             } elseif ($step === 'askAddress') {
-                $bot->reply('Địa chỉ nhận hàng của bạn ở đâu?');
+                $bot->reply(BotSetting::get('bot_ask_address', 'Địa chỉ nhận hàng của bạn ở đâu?'));
 
             } elseif ($step === 'confirmOrder') {
                 $product = Product::find($state['selectedProductId']);
-                $bot->reply('Xác nhận đặt hàng:');
+                $bot->reply(BotSetting::get('bot_confirm_order_intro', 'Xác nhận đặt hàng:'));
                 $bot->reply('📦 Sản phẩm: ' . $product->name);
                 $bot->reply('👤 Người nhận: ' . $state['customerName']);
                 $bot->reply('📞 SĐT: ' . $state['customerPhone']);
                 $bot->reply('🏠 Địa chỉ: ' . $state['customerAddress']);
 
-                $question = Question::create('Bạn xác nhận đặt hàng chứ?')
+                $question = Question::create(BotSetting::get('bot_confirm_order_question', 'Bạn xác nhận đặt hàng chứ?'))
                     ->addButtons([
                         Button::create('Xác nhận')->value('yes'),
                         Button::create('Hủy')->value('no'),

@@ -10,6 +10,9 @@ use App\Http\Controllers\BotManController;
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/botman/chat', function() {
+    return view('botman.chat');
+});
 Route::get('/api/products/search', [ProductController::class, 'search'])->name('api.products.search');
 Route::get('/feedback', [HomeController::class, 'feedback'])->name('feedback');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');

@@ -16,7 +16,14 @@ class Product extends Model
         'image',
         'is_featured',
         'is_active',
-        'stock'
+        'stock',
+        'min_height',
+        'max_height',
+        'min_weight',
+        'max_weight',
+        'gender',
+        'material',
+        'size_guide'
     ];
 
     public function category(): BelongsTo

@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - @yield('title', 'Dashboard')</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
-            --primary: #BC8F8F; /* Dusty Rose */
-            --bg: #F8FAFC;
-            --sidebar-bg: #0F172A; /* Slate 900 */
-            --sidebar-text: #94A3B8;
-            --sidebar-active: #F8FAFC;
-            --sidebar-hover: #1E293B;
-            --text-main: #1E293B;
-            --text-secondary: #64748B;
-            --white: #FFFFFF;
-            --border: #E2E8F0;
+            --primary: #3b82f6; 
+            --primary-dark: #2563eb;
+            --bg: #f8fafc;
+            --sidebar-bg: #020617; 
+            --sidebar-text: #94a3b8;
+            --sidebar-active: #f8fafc;
+            --sidebar-hover: #1e293b;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -25,7 +26,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
         .sidebar {
             width: 260px;
@@ -82,7 +83,7 @@
         .nav-link.active {
             background: var(--primary);
             color: white;
-            box-shadow: 0 4px 12px rgba(188, 143, 143, 0.35);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
         }
         .nav-link.active i { opacity: 1; }
 

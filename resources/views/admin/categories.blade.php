@@ -136,4 +136,51 @@
         </tbody>
     </table>
 </div>
+
+<div class="pagination-container" style="margin-top: 30px; display: flex; justify-content: center;">
+    {{ $categories->links() }}
+</div>
+
+<style>
+    /* Pagination Styling */
+    .pagination {
+        display: flex;
+        gap: 8px;
+        list-style: none;
+        padding: 0;
+    }
+    .page-item {
+        margin: 0;
+    }
+    .page-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        font-weight: 700;
+        font-size: 14px;
+        transition: var(--transition);
+        text-decoration: none;
+    }
+    .page-item.active .page-link {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 4px 12px rgba(188, 143, 143, 0.3);
+    }
+    .page-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: #fdfdfd;
+    }
+    .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+</style>
 @endsection

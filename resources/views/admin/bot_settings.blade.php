@@ -64,24 +64,63 @@
 <div class="settings-container">
     <form action="{{ route('admin.bot.update') }}" method="POST">
         @csrf
-        <div class="settings-group">
-            <h3 style="margin-bottom: 25px; font-size: 18px; display: flex; align-items: center; gap: 10px;">
-                <i class="fa-solid fa-comments" style="color: var(--primary);"></i> Nội dung hội thoại
-            </h3>
-            
-            @foreach($settings as $setting)
-            <div class="setting-item">
-                <label class="form-label" for="{{ $setting->key }}">{{ $setting->label }}</label>
-                <input type="text" name="settings[{{ $setting->key }}]" id="{{ $setting->key }}" class="form-control" value="{{ $setting->value }}">
-                <span class="setting-key">Key: {{ $setting->key }}</span>
-            </div>
-            @endforeach
-            
-            <div style="margin-top: 40px; border-top: 1px solid #f1f5f9; padding-top: 30px; text-align: right;">
-                <button type="submit" class="btn" style="padding: 14px 40px;">
-                    <i class="fa-solid fa-save"></i> Lưu cài đặt
-                </button>
-            </div>
+        
+        @php
+            $groupedSettings = $settings->groupBy('group');
+            $groupLabels = [
+                'general' => ['label' => 'Cài đặt chung', 'icon' => 'fa-robot'],
+                'menu' => ['label' => 'Menu & Điều hướng', 'icon' => 'fa-compass'],
+                'consultation' => ['label' => 'Tư vấn chọn Size', 'icon' => 'fa-ruler-combined'],
+                'order' => ['label' => 'Quy trình Đặt hàng', 'icon' => 'fa-shopping-cart'],
+                'tracking' => ['label' => 'Tra cứu đơn hàng', 'icon' => 'fa-truck-fast'],
+                'feedback' => ['label' => 'Góp ý & Phản hồi', 'icon' => 'fa-envelope-open-text'],
+            ];
+        @endphp
+
+        @foreach($groupLabels as $groupKey => $info)
+            @if(isset($groupedSettings[$groupKey]))
+                <div class="settings-group">
+                    <h3 style="margin-bottom: 25px; font-size: 18px; display: flex; align-items: center; gap: 12px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">
+                        <i class="fa-solid {{ $info['icon'] }}"></i> {{ $info['label'] }}
+                    </h3>
+                    
+                    <div class="row" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;">
+                        @foreach($groupedSettings[$groupKey] as $setting)
+                        <div class="setting-item" style="background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                            <label class="form-label" for="{{ $setting->key }}">{{ $setting->label }}</label>
+                            <input type="text" name="settings[{{ $setting->key }}]" id="{{ $setting->key }}" class="form-control" value="{{ $setting->value }}">
+                            <span class="setting-key">Key: {{ $setting->key }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        @endforeach
+
+        {{-- Handle any groups not explicitly defined in groupLabels --}}
+        @foreach($groupedSettings as $groupKey => $items)
+            @if(!isset($groupLabels[$groupKey]))
+                <div class="settings-group">
+                    <h3 style="margin-bottom: 25px; font-size: 18px; display: flex; align-items: center; gap: 12px; color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 15px;">
+                        <i class="fa-solid fa-gears"></i> Nhóm khác ({{ $groupKey }})
+                    </h3>
+                    <div class="row" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;">
+                        @foreach($items as $setting)
+                        <div class="setting-item" style="background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #f1f5f9;">
+                            <label class="form-label" for="{{ $setting->key }}">{{ $setting->label }}</label>
+                            <input type="text" name="settings[{{ $setting->key }}]" id="{{ $setting->key }}" class="form-control" value="{{ $setting->value }}">
+                            <span class="setting-key">Key: {{ $setting->key }}</span>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        @endforeach
+        
+        <div style="position: sticky; bottom: 30px; margin-top: 40px; text-align: right; z-index: 10;">
+            <button type="submit" class="btn" style="padding: 14px 50px; box-shadow: 0 10px 25px -5px rgba(188, 143, 143, 0.4); border-radius: 30px;">
+                <i class="fa-solid fa-save"></i> Lưu cài đặt Chatbot
+            </button>
         </div>
     </form>
 </div>

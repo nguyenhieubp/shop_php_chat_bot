@@ -177,7 +177,7 @@ class AdminController extends Controller
     public function categories()
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
-        $categories = Category::withCount('products')->get();
+        $categories = Category::withCount('products')->latest()->paginate(10);
         return view('admin.categories', compact('categories'));
     }
 
@@ -439,16 +439,16 @@ class AdminController extends Controller
         // If empty, seed initial data
         if ($settings->isEmpty()) {
             $initialSettings = [
-                ['key' => 'bot_welcome_msg', 'value' => 'Chào mừng bạn đến với Cosmetic Store! 🌸', 'label' => 'Lời chào khởi đầu'],
-                ['key' => 'bot_start_btn', 'value' => 'Bắt đầu', 'label' => 'Tên nút Bắt đầu'],
-                ['key' => 'bot_menu_msg', 'value' => 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?', 'label' => 'Lời dẫn Menu chính'],
-                ['key' => 'bot_shopping_btn', 'value' => '🚀 Bắt đầu mua sắm', 'label' => 'Nút Mua sắm nhanh'],
-                ['key' => 'bot_search_btn', 'value' => '🔍 Tìm sản phẩm', 'label' => 'Nút Tìm sản phẩm'],
-                ['key' => 'bot_track_btn', 'value' => '📦 Tra cứu đơn hàng', 'label' => 'Nút Tra cứu đơn hàng'],
-                ['key' => 'bot_blog_btn', 'value' => '📝 Đọc Blog', 'label' => 'Nút Đọc Blog'],
-                ['key' => 'bot_feedback_btn', 'value' => '📧 Gửi góp ý', 'label' => 'Nút Gửi góp ý'],
-                ['key' => 'bot_contact_btn', 'value' => '📞 Liên hệ', 'label' => 'Nút Liên hệ'],
-                ['key' => 'bot_placeholder', 'value' => 'Nhấn chọn hoặc nhập tin nhắn...', 'label' => 'Dòng gợi ý (Placeholder)'],
+                ['key' => 'bot_welcome_msg', 'value' => 'Chào mừng bạn đến với Cosmetic Store! 🌸', 'label' => 'Lời chào khởi đầu', 'group' => 'general'],
+                ['key' => 'bot_start_btn', 'value' => 'Bắt đầu', 'label' => 'Tên nút Bắt đầu', 'group' => 'general'],
+                ['key' => 'bot_menu_msg', 'value' => 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?', 'label' => 'Lời dẫn Menu chính', 'group' => 'menu'],
+                ['key' => 'bot_shopping_btn', 'value' => '🚀 Bắt đầu mua sắm', 'label' => 'Nút Mua sắm nhanh', 'group' => 'menu'],
+                ['key' => 'bot_search_btn', 'value' => '🔍 Tìm sản phẩm', 'label' => 'Nút Tìm sản phẩm', 'group' => 'menu'],
+                ['key' => 'bot_track_btn', 'value' => '📦 Tra cứu đơn hàng', 'label' => 'Nút Tra cứu đơn hàng', 'group' => 'menu'],
+                ['key' => 'bot_blog_btn', 'value' => '📝 Đọc Blog', 'label' => 'Nút Đọc Blog', 'group' => 'menu'],
+                ['key' => 'bot_feedback_btn', 'value' => '📧 Gửi góp ý', 'label' => 'Nút Gửi góp ý', 'group' => 'menu'],
+                ['key' => 'bot_contact_btn', 'value' => '📞 Liên hệ', 'label' => 'Nút Liên hệ', 'group' => 'menu'],
+                ['key' => 'bot_placeholder', 'value' => 'Nhấn chọn hoặc nhập tin nhắn...', 'label' => 'Dòng gợi ý (Placeholder)', 'group' => 'general'],
             ];
             foreach ($initialSettings as $s) {
                 BotSetting::create($s);

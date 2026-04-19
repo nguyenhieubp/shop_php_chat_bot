@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Cửa hàng Mỹ phẩm Cao cấp')
+@section('title', 'Fashion Hub - Thời trang đa phong cách')
 
 @section('styles')
 <style>
     .hero-slider {
         position: relative;
-        height: 280px;
+        height: 650px;
         overflow: hidden;
-        background: #f8fafc;
-        margin-bottom: 50px;
+        background: #000;
+        margin-bottom: 80px;
     }
 
     .slide {
@@ -20,7 +20,7 @@
         height: 100%;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 1s ease-in-out, visibility 1s;
+        transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         background-size: cover;
@@ -38,389 +38,354 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.2) 60%, transparent 100%);
+        background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+    }
+
+    [data-theme="dark"] .slide-overlay {
+        background: linear-gradient(135deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.4) 60%, transparent 100%);
     }
 
     .slide-content {
         position: relative;
         z-index: 10;
-        max-width: 600px;
-        padding-left: 10%;
+        max-width: 800px;
+        padding-left: 5%;
+    }
+
+    .badge-premium {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: #ff0000;
+        color: #ffffff;
+        border-radius: 0;
+        font-weight: 900;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        margin-bottom: 30px;
     }
 
     .slide-title {
-        font-size: 40px;
-        color: var(--primary);
+        font-size: 72px;
+        color: #ffffff;
         margin-bottom: 15px;
-        line-height: 1.1;
-        transform: translateY(30px);
-        opacity: 0;
-        transition: all 0.8s ease 0.3s;
+        line-height: 1;
+        font-weight: 900;
+        letter-spacing: -0.05em;
+        text-transform: uppercase;
     }
 
     .slide-subtitle {
-        font-size: 16px;
-        color: #64748b;
-        margin-bottom: 20px;
-        transform: translateY(30px);
-        opacity: 0;
-        transition: all 0.8s ease 0.5s;
-    }
-
-    .slide.active .slide-title,
-    .slide.active .slide-subtitle {
-        transform: translateY(0);
-        opacity: 1;
+        font-size: 18px;
+        color: rgba(255,255,255,0.8);
+        margin-bottom: 40px;
+        max-width: 500px;
+        font-weight: 500;
     }
 
     .slider-dots {
         position: absolute;
         bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
+        left: 5%;
         display: flex;
         gap: 12px;
         z-index: 20;
     }
 
     .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: rgba(188, 143, 143, 0.3);
+        width: 40px;
+        height: 3px;
+        background: rgba(255,255,255,0.3);
         cursor: pointer;
         transition: var(--transition);
     }
 
     .dot.active {
-        background: var(--primary);
-        width: 30px;
-        border-radius: 5px;
+        background: #ff0000;
+        width: 60px;
     }
 
-    .slider-nav {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 45px;
-        height: 45px;
-        background: rgba(255, 255, 255, 0.7);
-        border: none;
-        border-radius: 50%;
+    /* Minimalist Filter Bar */
+    .filter-section {
+        margin-bottom: 40px;
+    }
+
+    .filter-container {
         display: flex;
         align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 21;
-        transition: var(--transition);
-        color: var(--primary);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .slider-nav:hover {
-        background: var(--primary);
-        color: white;
-    }
-
-    .slider-prev { left: 20px; }
-    .slider-next { right: 20px; }
-
-    .section-title {
-        text-align: center;
-        margin-bottom: 50px;
-        font-size: 36px;
-        font-weight: 700;
-        color: var(--primary);
-    }
-
-    /* Enhanced Product Section */
-    .filter-toolbar {
-        display: flex;
-        flex-direction: column;
-        gap: 25px;
-        margin-bottom: 50px;
-    }
-
-    .filter-row {
-        display: flex;
         justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .search-box {
-        position: relative;
-        flex: 1;
-        min-width: 300px;
-    }
-
-    .search-box input {
-        width: 100%;
-        padding: 12px 20px 12px 45px;
+        background: var(--surface);
+        padding: 10px 10px 10px 30px;
+        border-radius: 100px;
+        box-shadow: var(--shadow-lg);
         border: 1px solid var(--border);
-        border-radius: 30px;
-        background: #f8fafc;
-        outline: none;
-        transition: all 0.3s ease;
-        font-size: 15px;
     }
 
-    .search-box input:focus {
-        border-color: var(--primary);
-        background: white;
-        box-shadow: 0 0 0 4px rgba(188, 143, 143, 0.1);
+    @media (max-width: 991px) {
+        .filter-container {
+            border-radius: 20px;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
     }
 
-    .search-box i {
-        position: absolute;
-        left: 18px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #94a3b8;
-    }
-
-    .search-btn {
-        position: absolute;
-        right: 6px;
-        top: 6px;
-        bottom: 6px;
-        padding: 0 20px;
-        background: var(--primary);
-        color: white;
-        border: none;
-        border-radius: 25px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        transition: var(--transition);
+    .search-input-group {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 15px;
+        flex: 1;
     }
 
-    .search-btn:hover {
-        opacity: 0.9;
-        transform: scale(1.02);
+    .search-input-group i {
+        color: var(--primary);
+        font-size: 18px;
     }
 
-    .category-filter {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .cat-btn {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 30px;
-        background: #f1f5f9;
-        color: #64748b;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-
-    .cat-btn.active {
-        background: var(--primary);
-        color: white;
-        box-shadow: 0 4px 12px rgba(188, 143, 143, 0.3);
-    }
-
-    .price-range-group {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #f1f5f9;
-        padding: 5px 15px;
-        border-radius: 30px;
-    }
-
-    .price-input {
-        width: 100px;
+    .search-input-group input {
         border: none;
         background: transparent;
-        padding: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        outline: none;
-        color: var(--primary);
-    }
-
-    .price-input::placeholder {
-        color: #94a3b8;
-        font-weight: 400;
-    }
-
-    .sort-select {
-        padding: 10px 20px;
-        border: 1px solid var(--border);
-        border-radius: 30px;
-        background: white;
         color: var(--text);
-        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        width: 100%;
         outline: none;
+    }
+
+    .category-pills {
+        display: flex;
+        gap: 8px;
+        padding-right: 20px;
+        border-right: 1px solid var(--border);
+        margin-right: 20px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .cat-pill {
+        padding: 10px 24px;
+        border-radius: 50px;
         font-size: 14px;
+        font-weight: 700;
+        color: var(--text-muted);
+        cursor: pointer;
         transition: var(--transition);
+        white-space: nowrap;
+        border: 1px solid transparent;
     }
 
-    .sort-select:focus {
-        border-color: var(--primary);
+    .cat-pill:hover {
+        background: var(--bg);
+        color: var(--text);
     }
 
+    .cat-pill.active {
+        background: var(--text);
+        color: var(--surface);
+    }
+
+    [data-theme="dark"] .cat-pill.active {
+        background: var(--primary);
+    }
+
+    /* Product Grid Modern */
     .product-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 35px;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 24px;
         margin-bottom: 60px;
     }
 
     .product-card {
-        border: none;
-        background: white;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0;
         padding: 0;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
         position: relative;
     }
 
     .product-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border-color: #000;
+        box-shadow: var(--shadow-lg);
     }
 
-    .product-image-container {
+    .product-image-wrapper {
         position: relative;
-        height: 200px;
+        aspect-ratio: 3/4;
         overflow: hidden;
-        background: #f8fafc;
+        background: #f1f1f1;
     }
 
-    .product-image-container img {
+    .product-image-wrapper img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.6s ease;
+        transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .product-card:hover .product-image-container img {
+    .product-card:hover .product-image-wrapper img {
         transform: scale(1.1);
     }
 
-    .product-badge {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        background: var(--primary);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        z-index: 5;
+    .btn-quick-add {
+        position: relative;
+        z-index: 10;
+        width: 44px;
+        height: 44px;
+        background: var(--surface);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        font-size: 18px;
+        box-shadow: var(--shadow-md);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
     }
 
-    .product-info {
-        padding: 15px;
+    .btn-quick-add-wrapper {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        z-index: 10;
+    }
+
+    .stretched-link::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        content: "";
+    }
+
+    .product-card:hover .btn-quick-add {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .btn-quick-add:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .product-meta {
         text-align: left;
     }
 
-    .product-name {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 10px;
-        color: #1e293b;
-        height: 44px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+    .product-meta {
+        padding: 4px 8px 8px 8px;
+    }
+
+    .product-details-box {
+        margin-top: 10px;
+        padding: 0 5px;
+    }
+
+    .product-brand {
+        font-size: 11px;
+        font-weight: 800;
+        color: #ff0000;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        margin-bottom: 5px;
+    }
+
+    .product-title {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: var(--text);
         line-height: 1.4;
+        text-transform: uppercase;
     }
 
-    .product-price {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--primary);
-        margin-bottom: 15px;
+    .product-price-tag {
+        font-size: 16px;
+        font-weight: 900;
+        color: #000;
     }
 
-    .product-actions {
-        display: flex;
-        gap: 10px;
-    }
-
-    .btn-cart {
-        padding: 10px 15px;
-        background: #334155;
-        border-radius: 8px;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-
-    .btn-cart:hover {
-        background: #1e293b;
-    }
-
-    .btn-detail {
-        flex: 1;
-        padding: 10px;
-        text-align: center;
-        text-decoration: none;
-        background: var(--secondary);
-        color: var(--primary);
+    .fit-suggestion {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 8px;
+        border-top: 1px dashed var(--border);
+        padding-top: 8px;
         font-weight: 600;
-        font-size: 13px;
-        border-radius: 8px;
-        transition: var(--transition);
     }
 
-    .btn-detail:hover {
-        background: #f1e4e4;
+    /* Stats Minimalist */
+    .stats-banner {
+        padding: 80px 0;
+        background: var(--surface);
+        border-radius: var(--radius-xl);
+        margin-bottom: 80px;
+        border: 1px solid var(--border);
+    }
+
+    .stat-number {
+        font-size: 50px;
+        font-weight: 800;
+        color: var(--text);
+        letter-spacing: -0.05em;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+    }
+
+    @media (max-width: 768px) {
+        .stat-number { font-size: 48px; }
+        .slide-title { font-size: 50px; }
     }
 </style>
 @endsection
 
 @section('content')
+    <!-- Hero Section -->
     <section class="hero-slider animate-fade">
         @forelse($sliders as $slider)
             <div class="slide {{ $loop->first ? 'active' : '' }}" style="background-image: url('{{ asset($slider->image) }}');">
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
+                    <div class="badge-premium">
+                        <i class="fa-solid fa-crown"></i> Bộ sưu tập cao cấp
+                    </div>
                     <h1 class="slide-title">{{ $slider->title }}</h1>
                     <p class="slide-subtitle">{{ $slider->subtitle }}</p>
-                    @if($slider->link)
-                        <a href="{{ $slider->link }}" class="btn" style="padding: 15px 40px; font-size: 16px; border-radius: 30px;">Khám phá ngay</a>
-                    @else
-                        <a href="#products" class="btn" style="padding: 15px 40px; font-size: 16px; border-radius: 30px;">Mua ngay</a>
-                    @endif
+                    <a href="#products" class="btn">
+                        Khám phá ngay <i class="fa-solid fa-arrow-right"></i>
+                    </a>
                 </div>
             </div>
         @empty
-            <div class="slide active" style="background-color: var(--secondary); display: flex; justify-content: center; text-align: center;">
-                <div class="container" style="max-width: 800px;">
-                    <h1 style="font-size: 48px; color: var(--primary); margin-bottom: 20px;">Vẻ đẹp hoàn mỹ của bạn</h1>
-                    <p style="font-size: 18px; color: #64748b; margin-bottom: 30px;">Chào mừng bạn đến với Cosmetic Store - Nơi thăng hoa nhan sắc Việt.</p>
-                    <a href="#products" class="btn" style="padding: 15px 40px; font-size: 16px; border-radius: 30px;">Bắt đầu mua sắm</a>
+            <div class="slide active">
+                <div class="slide-content">
+                    <div class="badge-premium">Khám phá vẻ đẹp</div>
+                    <h1 class="slide-title">Define your <br> own style.</h1>
+                    <p class="slide-subtitle">Bộ sưu tập thời trang street-style dẫn đầu xu hướng 2024.</p>
+                    <a href="#products" class="btn">Bắt đầu mua sắm</a>
                 </div>
             </div>
         @endforelse
 
         @if(count($sliders) > 1)
-            <button class="slider-nav slider-prev" onclick="prevSlide()" aria-label="Previous slide">
-                <i class="fa-solid fa-angle-left"></i>
-            </button>
-            <button class="slider-nav slider-next" onclick="nextSlide()" aria-label="Next slide">
-                <i class="fa-solid fa-angle-right"></i>
-            </button>
-
             <div class="slider-dots">
                 @foreach($sliders as $index => $slider)
                     <div class="dot {{ $loop->first ? 'active' : '' }}" onclick="goToSlide({{ $index }})"></div>
@@ -429,35 +394,26 @@
         @endif
     </section>
 
-    <div class="container" id="products">
-        <h2 class="section-title animate-fade">Khám phá sản phẩm</h2>
-
-        <div class="filter-toolbar animate-fade">
-            <div class="filter-row">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filter-section" id="products">
+            <div class="filter-container">
+                <div class="search-input-group">
+                    <i class="fa-solid fa-search"></i>
                     <input type="text" id="product-search" placeholder="Bạn đang tìm sản phẩm gì?">
-                    <button id="search-btn" class="search-btn">
-                        <span>Tìm kiếm</span>
-                    </button>
                 </div>
-                <div class="category-filter">
-                    <button class="cat-btn active" data-category="all">Tất cả</button>
+                
+                <div class="category-pills">
+                    <div class="cat-pill active" data-category="all">Tất cả</div>
                     @foreach($categories as $category)
-                        <button class="cat-btn" data-category="{{ $category->id }}">{{ $category->name }}</button>
+                        <div class="cat-pill" data-category="{{ $category->id }}">{{ $category->name }}</div>
                     @endforeach
                 </div>
-            </div>
 
-            <div class="filter-row">
-                <div class="price-range-group">
-                    <input type="number" id="min-price" placeholder="Giá từ" class="price-input">
-                    <span style="color: #94a3b8;">-</span>
-                    <input type="number" id="max-price" placeholder="Đến" class="price-input">
-                </div>
-                <div class="sort-filter">
-                    <select id="price-sort" class="sort-select">
-                        <option value="default">Sắp xếp: Mặc định</option>
+                <div style="padding-right: 20px;">
+                    <select id="price-sort" class="sort-select" style="font-family: inherit; font-size: 13px; font-weight: 800; border: none; background: transparent; cursor: pointer; outline: none; text-transform: uppercase; letter-spacing: 0.05em;">
+                        <option value="default">Sắp xếp</option>
                         <option value="low-high">Giá: Thấp đến Cao</option>
                         <option value="high-low">Giá: Cao đến Thấp</option>
                     </select>
@@ -465,224 +421,127 @@
             </div>
         </div>
 
+        <!-- Product Grid -->
         <div class="product-grid" id="productGrid">
-            @foreach($featuredProducts->take(10) as $product)
-                <div class="product-card animate-fade" data-product-category="{{ $product->category_id }}" data-price="{{ $product->price }}">
-                    @if($loop->index < 3)
-                        <div class="product-badge">New</div>
-                    @endif
-                    <div class="product-image-container">
+            @foreach($featuredProducts as $product)
+                <div class="product-card" data-category="{{ $product->category_id }}" data-price="{{ $product->price }}">
+                    <div class="product-image-wrapper">
                         @if($product->image)
                             <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" loading="lazy">
                         @else
-                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #cbd5e1;">✨</div>
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: var(--border);">✨</div>
                         @endif
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">{{ $product->name }}</h3>
-                        <p class="product-price">{{ number_format($product->price) }} VNĐ</p>
                         
-                        <div class="product-actions">
-                            <a href="{{ route('product.show', $product->slug) }}" class="btn-detail">Chi tiết</a>
-                            <form action="{{ route('cart.add', $product->id) }}" method="POST" style="flex: 0 0 auto;">
-                                @csrf
-                                <button type="submit" class="btn-cart" title="Thêm vào giỏ hàng">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                </button>
-                            </form>
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="btn-quick-add-wrapper">
+                            @csrf
+                            <button type="submit" class="btn-quick-add" title="Thêm vào giỏ">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="product-meta">
+                        <div class="product-details-box">
+                            <div class="product-brand">{{ $product->category->name ?? 'YaMe Collection' }}</div>
+                            <h3 class="product-title">
+                                <a href="{{ route('product.show', $product->slug) }}" class="stretched-link" style="text-decoration: none; color: inherit;">
+                                    {{ $product->name }}
+                                </a>
+                            </h3>
+                            <div class="product-price-tag">{{ number_format($product->price) }} đ</div>
+                            @if($product->min_height)
+                                <div class="fit-suggestion">
+                                    <i class="fa-solid fa-ruler-vertical"></i> Gợi ý: {{ $product->min_height }}-{{ $product->max_height }}cm | {{ $product->min_weight }}-{{ $product->max_weight }}kg
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             @endforeach
         </div>
-    </div>
 
-    <!-- Stats Section -->
-    <section id="stats" style="background: var(--primary); color: white; padding: 60px 0; margin-top: 50px;">
-        <div class="container animate-fade">
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); text-align: center;">
+        <!-- Stats Section -->
+        <section class="stats-banner">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center;">
                 <div>
-                    <h2 style="font-size: 36px; margin-bottom: 10px;">99%</h2>
-                    <p style="font-size: 14px; text-transform: uppercase;">Khách hàng hài lòng</p>
+                    <div class="stat-number">99%</div>
+                    <div class="stat-label">Hài lòng</div>
                 </div>
                 <div>
-                    <h2 style="font-size: 36px; margin-bottom: 10px;">5000+</h2>
-                    <p style="font-size: 14px; text-transform: uppercase;">Đơn hàng thành công</p>
+                    <div class="stat-number">12k</div>
+                    <div class="stat-label">Khách hàng</div>
                 </div>
                 <div>
-                    <h2 style="font-size: 36px; margin-bottom: 10px;">24/7</h2>
-                    <p style="font-size: 14px; text-transform: uppercase;">Hỗ trợ tận tình</p>
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Hỗ trợ tận tâm</div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Blog Section -->
-    <div class="container" id="blog" style="margin-top: 80px;">
-        <h2 class="section-title animate-fade">Tin tức & Làm đẹp</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-            @foreach($latestPosts as $post)
-            <div class="product-card animate-fade" style="text-align: left; padding: 0; overflow: hidden;">
-                <div style="height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #999; overflow: hidden;">
-                    @if($post->image)
-                        <img src="{{ asset($post->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        📰
-                    @endif
-                </div>
-                <div style="padding: 20px;">
-                    <h3 style="font-size: 18px; margin-bottom: 10px; color: var(--primary);">{{ $post->title }}</h3>
-                    <p style="font-size: 14px; color: #666; margin-bottom: 15px;">
-                        {{ Str::limit(strip_tags($post->content), 100) }}
-                    </p>
-                    <a href="{{ route('blog.show', $post->slug) }}" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 14px;">Xem chi tiết →</a>
-                </div>
-            </div>
-            @endforeach
-        </div>
+        </section>
     </div>
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Category Filter with Sorting
-        const catButtons = document.querySelectorAll('.cat-btn');
+        const catPills = document.querySelectorAll('.cat-pill');
         const productGrid = document.getElementById('productGrid');
         const sortSelect = document.getElementById('price-sort');
         const searchInput = document.getElementById('product-search');
-        const minPriceInput = document.getElementById('min-price');
-        const maxPriceInput = document.getElementById('max-price');
-        let productCards = Array.from(document.querySelectorAll('.product-card[data-product-category]'));
 
-        function applyFilters() {
-            const selectedCategory = document.querySelector('.cat-btn.active').getAttribute('data-category');
-            const sortValue = sortSelect.value;
-            const searchText = searchInput.value.toLowerCase();
-            const minPrice = parseInt(minPriceInput.value) || 0;
-            const maxPrice = parseInt(maxPriceInput.value) || Infinity;
-
-            // Filter logic
-            productCards.forEach(card => {
-                const category = card.getAttribute('data-product-category');
-                const price = parseInt(card.getAttribute('data-price'));
-                const name = card.querySelector('.product-name').textContent.toLowerCase();
-
-                const matchesCategory = (selectedCategory === 'all' || category === selectedCategory);
-                const matchesSearch = name.includes(searchText);
-                const matchesPrice = (price >= minPrice && price <= maxPrice);
-
-                if (matchesCategory && matchesSearch && matchesPrice) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Sorting logic
-            let visibleCards = productCards.filter(card => card.style.display !== 'none');
-            
-            if (sortValue !== 'default') {
-                visibleCards.sort((a, b) => {
-                    const priceA = parseInt(a.getAttribute('data-price'));
-                    const priceB = parseInt(b.getAttribute('data-price'));
-                    return sortValue === 'low-high' ? priceA - priceB : priceB - priceA;
-                });
-
-                // Reorder in DOM
-                visibleCards.forEach(card => productGrid.appendChild(card));
-            }
-        }
-
-        catButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                catButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                applyFilters();
-            });
-        });
-
-        sortSelect.addEventListener('change', fetchProducts);
-        minPriceInput.addEventListener('change', fetchProducts);
-        maxPriceInput.addEventListener('change', fetchProducts);
-
-        const searchBtn = document.getElementById('search-btn');
-        searchBtn.addEventListener('click', fetchProducts);
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                fetchProducts();
-            }
-        });
-
+        // Filter Logic
         async function fetchProducts() {
-            const selectedCategory = document.querySelector('.cat-btn.active').getAttribute('data-category');
-            const sortValue = sortSelect.value;
-            const searchText = searchInput.value;
-            const minPrice = minPriceInput.value;
-            const maxPrice = maxPriceInput.value;
+            const activeCat = document.querySelector('.cat-pill.active').getAttribute('data-category');
+            const sortVal = sortSelect.value;
+            const query = searchInput.value;
 
-            // Show loading state
-            productGrid.style.opacity = '0.5';
-            searchBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            productGrid.style.opacity = '0.4';
 
             try {
                 const url = new URL('{{ route('api.products.search') }}', window.location.origin);
-                url.searchParams.append('query', searchText);
-                url.searchParams.append('category_id', selectedCategory);
-                url.searchParams.append('min_price', minPrice);
-                url.searchParams.append('max_price', maxPrice);
-                url.searchParams.append('sort', sortValue);
+                url.searchParams.append('query', query);
+                url.searchParams.append('category_id', activeCat);
+                url.searchParams.append('sort', sortVal);
 
-                const response = await fetch(url);
-                const products = await response.json();
-
+                const res = await fetch(url);
+                const products = await res.json();
                 renderProducts(products);
-            } catch (error) {
-                console.error('Error fetching products:', error);
+            } catch (e) {
+                console.error(e);
             } finally {
                 productGrid.style.opacity = '1';
-                searchBtn.innerHTML = '<span>Tìm kiếm</span>';
             }
         }
 
         function renderProducts(products) {
             productGrid.innerHTML = '';
-
             if (products.length === 0) {
-                productGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #64748b; font-size: 18px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
+                productGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 100px; font-size: 20px; font-weight: 700; color: var(--text-muted);">Không tìm thấy sản phẩm phù hợp.</div>';
                 return;
             }
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            products.forEach((product, index) => {
+            products.forEach(p => {
                 const card = document.createElement('div');
-                card.className = 'product-card animate-fade';
-                card.setAttribute('data-product-category', product.category_id);
-                card.setAttribute('data-price', product.price);
-
-                const badge = index < 3 ? '<div class="product-badge">New</div>' : '';
-                const imageHtml = product.image 
-                    ? `<img src="/${product.image}" alt="${product.name}" loading="lazy">`
-                    : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #cbd5e1;">✨</div>`;
-
+                card.className = 'product-card';
                 card.innerHTML = `
-                    ${badge}
-                    <div class="product-image-container">
-                        ${imageHtml}
+                    <div class="product-image-wrapper">
+                        ${p.image ? `<img src="/${p.image}" alt="${p.name}">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--border);">✨</div>`}
+                        <form action="/cart/add/${p.id}" method="POST" class="btn-quick-add-wrapper">
+                            <input type="hidden" name="_token" value="${token}">
+                            <button type="submit" class="btn-quick-add" title="Thêm vào giỏ"><i class="fa-solid fa-plus"></i></button>
+                        </form>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-name">${product.name}</h3>
-                        <p class="product-price">${new Intl.NumberFormat().format(product.price)} VNĐ</p>
-                        
-                        <div class="product-actions">
-                            <a href="/product/${product.slug}" class="btn-detail">Chi tiết</a>
-                            <form action="/cart/add/${product.id}" method="POST" style="flex: 0 0 auto;">
-                                <input type="hidden" name="_token" value="${csrfToken}">
-                                <button type="submit" class="btn-cart" title="Thêm vào giỏ hàng">
-                                    <i class="fa-solid fa-cart-plus"></i>
-                                </button>
-                            </form>
+                    <div class="product-meta">
+                        <div class="product-details-box">
+                            <div class="product-brand">${p.category?.name || 'YaMe Style'}</div>
+                            <h3 class="product-title"><a href="/product/${p.slug}" class="stretched-link" style="text-decoration:none;color:inherit;">${p.name}</a></h3>
+                            <div class="product-price-tag">${new Intl.NumberFormat().format(p.price)} đ</div>
+                            ${p.min_height ? `
+                                <div class="fit-suggestion">
+                                    <i class="fa-solid fa-ruler-vertical"></i> Gợi ý: ${p.min_height}-${p.max_height}cm | ${p.min_weight}-${p.max_weight}kg
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
@@ -690,50 +549,36 @@
             });
         }
 
-        // Hero Slider Logic
+        catPills.forEach(p => p.addEventListener('click', function() {
+            catPills.forEach(x => x.classList.remove('active'));
+            this.classList.add('active');
+            fetchProducts();
+        }));
+
+        sortSelect.addEventListener('change', fetchProducts);
+        searchInput.addEventListener('input', debounce(fetchProducts, 500));
+
+        function debounce(f, w) {
+            let t;
+            return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), w); };
+        }
+
+        // Slider Logic
         const slides = document.querySelectorAll('.slide');
         const dots = document.querySelectorAll('.dot');
-        let currentSlide = 0;
-        let slideInterval;
+        let idx = 0;
 
         if (slides.length > 1) {
-            function showSlide(index) {
+            function show(n) {
                 slides.forEach(s => s.classList.remove('active'));
                 dots.forEach(d => d.classList.remove('active'));
-                
-                slides[index].classList.add('active');
-                dots[index].classList.add('active');
-                currentSlide = index;
+                slides[n].classList.add('active');
+                dots[n].classList.add('active');
+                idx = n;
             }
 
-            window.goToSlide = function(index) {
-                showSlide(index);
-                resetInterval();
-            }
-
-            window.nextSlide = function() {
-                let nextIdx = (currentSlide + 1) % slides.length;
-                showSlide(nextIdx);
-                resetInterval();
-            }
-
-            window.prevSlide = function() {
-                let prevIdx = (currentSlide - 1 + slides.length) % slides.length;
-                showSlide(prevIdx);
-                resetInterval();
-            }
-
-            function autoNextSlide() {
-                let nextIdx = (currentSlide + 1) % slides.length;
-                showSlide(nextIdx);
-            }
-
-            function resetInterval() {
-                clearInterval(slideInterval);
-                slideInterval = setInterval(autoNextSlide, 5000);
-            }
-
-            slideInterval = setInterval(autoNextSlide, 5000);
+            window.goToSlide = n => show(n);
+            setInterval(() => show((idx + 1) % slides.length), 6000);
         }
     });
 </script>

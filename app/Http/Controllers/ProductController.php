@@ -34,6 +34,8 @@ class ProductController extends Controller
                     'product_id' => $id,
                     'phone' => $request->phone,
                     'customer_name' => $request->customer_name,
+                    'address' => $request->address,
+                    'notes' => $request->notes,
                     'status' => 'new'
                 ]);
             }
@@ -43,6 +45,8 @@ class ProductController extends Controller
                 'product_id' => $request->product_id,
                 'phone' => $request->phone,
                 'customer_name' => $request->customer_name,
+                'address' => $request->address,
+                'notes' => $request->notes,
                 'status' => 'new'
             ]);
         }
@@ -55,7 +59,9 @@ class ProductController extends Controller
         $categoryId = $request->input('category_id');
         $minPrice = $request->input('min_price');
         $maxPrice = $request->input('max_price');
-        $sort = $request->input('sort', 'default');
+        $height = $request->input('height');
+        $weight = $request->input('weight');
+        $gender = $request->input('gender');
 
         $products = Product::query();
 
@@ -65,6 +71,20 @@ class ProductController extends Controller
 
         if ($categoryId && $categoryId !== 'all') {
             $products->where('category_id', $categoryId);
+        }
+
+        if ($height) {
+            $products->where('min_height', '<=', $height)
+                     ->where('max_height', '>=', $height);
+        }
+
+        if ($weight) {
+            $products->where('min_weight', '<=', $weight)
+                     ->where('max_weight', '>=', $weight);
+        }
+
+        if ($gender) {
+            $products->where('gender', $gender);
         }
 
         if ($minPrice) {
