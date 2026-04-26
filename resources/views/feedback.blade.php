@@ -119,8 +119,8 @@
             <div class="info-item text-center">
                 <div class="info-icon"><i class="fa-solid fa-map-location-dot"></i></div>
                 <h4 style="font-size: 18px; margin-bottom: 10px; font-family: 'Playfair Display', serif;">Văn phòng đại diện</h4>
-                <p style="color: var(--primary); font-weight: 700; font-size: 16px;">Cosmetic Tower, Q.1</p>
-                <p style="color: #888; font-size: 13px; margin-top: 5px;">TP. Hồ Chí Minh, Việt Nam</p>
+                <p style="color: var(--primary); font-weight: 700; font-size: 16px;">Eaut</p>
+                <p style="color: #888; font-size: 13px; margin-top: 5px;">TP. Hà Nội, Việt Nam</p>
             </div>
         </div>
     </div>
