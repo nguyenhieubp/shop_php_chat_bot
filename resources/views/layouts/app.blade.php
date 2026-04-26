@@ -402,7 +402,7 @@
             title: 'Fashion Assistant',
             mainColor: '#ffffff',
             bubbleBackground: '#ffffff',
-            aboutText: 'Fashion Hub Specialist',
+            aboutText: '',
             placeholderText: '{{ $botPlaceholder }}',
             introMessage: '',
             headerTextColor: '#000000',
