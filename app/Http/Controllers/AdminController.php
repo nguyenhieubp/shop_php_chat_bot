@@ -92,6 +92,10 @@ class AdminController extends Controller
                 mkdir($destPath, 0777, true);
             }
             
+            if (!is_writable($destPath)) {
+                return back()->with('error', 'Thư mục ' . $destPath . ' không có quyền ghi. Vui lòng kiểm tra OneDrive hoặc phân quyền folder.');
+            }
+            
             $image->move($destPath, $imageName);
             $imagePath = 'uploads/products/' . $imageName;
         }
@@ -150,6 +154,10 @@ class AdminController extends Controller
             $destPath = public_path('uploads/products');
             if (!file_exists($destPath)) {
                 mkdir($destPath, 0777, true);
+            }
+            
+            if (!is_writable($destPath)) {
+                return back()->with('error', 'Thư mục ' . $destPath . ' không có quyền ghi. Vui lòng kiểm tra OneDrive hoặc phân quyền folder.');
             }
             
             $image->move($destPath, $imageName);
