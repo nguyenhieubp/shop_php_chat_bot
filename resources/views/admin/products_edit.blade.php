@@ -182,6 +182,50 @@
                 <textarea name="description" class="form-input" rows="8" style="resize: none;">{{ $product->description }}</textarea>
             </div>
 
+            <!-- Fit Attributes (Size Consultation) -->
+            <div style="background: #f1f5f9; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-ruler-combined" style="color: var(--primary);"></i> Thông số tư vấn (AI Consultation)
+                </h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Chiều cao tối thiểu (cm)</label>
+                        <input type="number" name="min_height" class="form-input" value="{{ $product->min_height }}" placeholder="Ví dụ: 150">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chiều cao tối đa (cm)</label>
+                        <input type="number" name="max_height" class="form-input" value="{{ $product->max_height }}" placeholder="Ví dụ: 170">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cân nặng tối thiểu (kg)</label>
+                        <input type="number" name="min_weight" class="form-input" value="{{ $product->min_weight }}" placeholder="Ví dụ: 45">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cân nặng tối đa (kg)</label>
+                        <input type="number" name="max_weight" class="form-input" value="{{ $product->max_weight }}" placeholder="Ví dụ: 65">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Giới tính phù hợp</label>
+                        <select name="gender" class="form-input">
+                            <option value="Unisex" {{ $product->gender == 'Unisex' ? 'selected' : '' }}>Unisex (Cả hai)</option>
+                            <option value="Nam" {{ $product->gender == 'Nam' ? 'selected' : '' }}>Nam</option>
+                            <option value="Nữ" {{ $product->gender == 'Nữ' ? 'selected' : '' }}>Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chất liệu</label>
+                        <input type="text" name="material" class="form-input" value="{{ $product->material }}" placeholder="Ví dụ: Cotton, Silk...">
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label"><i class="fa-solid fa-gears"></i> Cấu hình hiển thị</label>
                 <div class="checkbox-group">

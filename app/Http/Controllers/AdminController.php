@@ -100,6 +100,12 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
             'is_active' => $request->has('is_active'),
             'stock' => $request->stock ?? 0,
+            'min_height' => $request->min_height,
+            'max_height' => $request->max_height,
+            'min_weight' => $request->min_weight,
+            'max_weight' => $request->max_weight,
+            'gender' => $request->gender,
+            'material' => $request->material,
         ]);
 
         return redirect()->route('admin.products')->with('success', 'Sản phẩm đã được thêm!');
@@ -147,6 +153,12 @@ class AdminController extends Controller
             'is_featured' => $request->has('is_featured'),
             'is_active' => $request->has('is_active'),
             'stock' => $request->stock ?? 0,
+            'min_height' => $request->min_height,
+            'max_height' => $request->max_height,
+            'min_weight' => $request->min_weight,
+            'max_weight' => $request->max_weight,
+            'gender' => $request->gender,
+            'material' => $request->material,
         ]);
 
         return redirect()->route('admin.products')->with('success', 'Sản phẩm đã được cập nhật!');

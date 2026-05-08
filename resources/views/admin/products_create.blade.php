@@ -161,6 +161,50 @@
                 <textarea name="description" class="form-input" rows="12" style="resize: none;" placeholder="Mô tả về công dụng, thành phần, cách sử dụng..."></textarea>
             </div>
 
+            <!-- Fit Attributes (Size Consultation) -->
+            <div style="background: #f1f5f9; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 25px;">
+                <h3 style="font-size: 16px; font-weight: 800; margin-bottom: 20px; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-ruler-combined" style="color: var(--primary);"></i> Thông số tư vấn (AI Consultation)
+                </h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Chiều cao tối thiểu (cm)</label>
+                        <input type="number" name="min_height" class="form-input" placeholder="Ví dụ: 150">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chiều cao tối đa (cm)</label>
+                        <input type="number" name="max_height" class="form-input" placeholder="Ví dụ: 170">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Cân nặng tối thiểu (kg)</label>
+                        <input type="number" name="min_weight" class="form-input" placeholder="Ví dụ: 45">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cân nặng tối đa (kg)</label>
+                        <input type="number" name="max_weight" class="form-input" placeholder="Ví dụ: 65">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Giới tính phù hợp</label>
+                        <select name="gender" class="form-input">
+                            <option value="Unisex">Unisex (Cả hai)</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chất liệu</label>
+                        <input type="text" name="material" class="form-input" placeholder="Ví dụ: Cotton, Silk...">
+                    </div>
+                </div>
+            </div>
+
             <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 30px;">
                 <button type="submit" class="btn" style="padding: 16px 50px; font-size: 16px; border-radius: 15px;">
                     <i class="fa-solid fa-plus-circle" style="margin-right: 10px;"></i> Lưu & Đăng Sản Phẩm
