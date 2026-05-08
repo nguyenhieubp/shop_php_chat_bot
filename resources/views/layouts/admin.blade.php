@@ -221,6 +221,25 @@
         .modal-btn-cancel { background: #F1F5F9; color: #475569; }
         .modal-btn-cancel:hover { background: #E2E8F0; }
         .modal-btn-confirm { background: #EF4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+
+        /* Alert Styling */
+        .alert {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        .alert-success { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+        .alert-error { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
     @yield('styles')
 </head>
