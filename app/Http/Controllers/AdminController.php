@@ -86,7 +86,13 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/products'), $imageName);
+            
+            $destPath = public_path('uploads/products');
+            if (!file_exists($destPath)) {
+                mkdir($destPath, 0777, true);
+            }
+            
+            $image->move($destPath, $imageName);
             $imagePath = 'uploads/products/' . $imageName;
         }
 
@@ -140,7 +146,13 @@ class AdminController extends Controller
 
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/products'), $imageName);
+            
+            $destPath = public_path('uploads/products');
+            if (!file_exists($destPath)) {
+                mkdir($destPath, 0777, true);
+            }
+            
+            $image->move($destPath, $imageName);
             $product->image = 'uploads/products/' . $imageName;
         }
 
