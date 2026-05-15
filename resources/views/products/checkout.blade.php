@@ -10,6 +10,17 @@
     .checkout-input { width: 100%; padding: 15px 20px; border-radius: 12px; border: 1px solid #e2e8f0; background: #fff; font-size: 15px; transition: var(--transition); border: 1px solid var(--border); margin-bottom: 20px; }
     .checkout-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(188, 143, 143, 0.1); }
     .product-thumb { width: 80px; height: 100px; object-fit: cover; border-radius: 10px; box-shadow: var(--shadow-sm); }
+
+    /* Payment Method Styles */
+    .payment-methods { display: grid; gap: 15px; margin-top: 15px; }
+    .payment-method-item { border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: var(--transition); position: relative; }
+    .payment-method-item:hover { border-color: var(--primary); background: rgba(188, 143, 143, 0.02); }
+    .payment-method-item input[type="radio"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+    .payment-method-item.active { border-color: var(--primary); background: #fff9f9; border-width: 2px; }
+    .payment-method-icon { font-size: 20px; width: 35px; text-align: center; color: var(--primary); }
+    .payment-method-text { flex: 1; }
+    .payment-method-title { display: block; font-weight: 700; font-size: 14px; color: var(--text-main); margin-bottom: 2px; }
+    .payment-method-desc { display: block; font-size: 12px; color: #888; }
 </style>
 @endsection
 
@@ -46,12 +57,31 @@
                     </div>
 
                     <div style="margin-bottom: 40px;">
-                        <h3 style="font-size: 18px; margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 15px;">2. Địa chỉ & Ghi chú</h3>
-                        <div class="form-group">
-                            <label style="display: block; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: var(--text-main);">Địa chỉ chi tiết</label>
-                            <textarea name="notes" class="checkout-input" rows="4" placeholder="Nhập địa chỉ nhà, tên đường, phường/xã, quận/huyện..."></textarea>
+                        <h3 style="font-size: 18px; margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 15px;">3. Phương thức thanh toán</h3>
+                        <div class="payment-methods">
+                            <label class="payment-method-item active">
+                                <input type="radio" name="payment_method" value="cod" checked>
+                                <div class="payment-method-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                                <div class="payment-method-text">
+                                    <span class="payment-method-title">Thanh toán khi nhận hàng (COD)</span>
+                                    <span class="payment-method-desc">Thanh toán tiền mặt khi nhận hàng tại nhà</span>
+                                </div>
+                            </label>
+
+                            <label class="payment-method-item">
+                                <input type="radio" name="payment_method" value="vnpay">
+                                <div class="payment-method-icon">
+                                    <img src="https://sandbox.vnpayment.vn/paymentv2/Images/brands/logo-vnpay.png" alt="VNPay" style="height: 18px;">
+                                </div>
+                                <div class="payment-method-text">
+                                    <span class="payment-method-title">Thanh toán Online (VNPay)</span>
+                                    <span class="payment-method-desc">Ứng dụng ngân hàng, thẻ ATM, Visa, Master...</span>
+                                </div>
+                            </label>
                         </div>
                     </div>
+
+                    <input type="hidden" name="total_amount" value="{{ $product->price }}">
 
                     <div style="padding: 30px; background: #fff9f9; border-radius: 16px; border: 1px dashed var(--primary); margin-bottom: 40px;">
                         <div style="display: flex; gap: 15px; align-items: flex-start;">
@@ -117,4 +147,15 @@
         </div>
     </div>
 </div>
+@section('scripts')
+<script>
+    document.querySelectorAll('.payment-method-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            this.querySelector('input').checked = true;
+        });
+    });
+</script>
+@endsection
 @endsection

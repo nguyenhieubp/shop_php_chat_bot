@@ -61,7 +61,7 @@ class AdminController extends Controller
     public function orders()
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
-        $orders = Order::with('product')->latest()->get();
+        $orders = Order::with('product')->latest()->paginate(10);
         return view('admin.orders', compact('orders'));
     }
 
@@ -379,8 +379,13 @@ class AdminController extends Controller
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
         $order = Order::findOrFail($id);
-        $order->update(['status' => $request->status]);
-        return back()->with('success', 'Trạng thái đơn hàng đã được cập nhật!');
+        
+        $data = [];
+        if ($request->has('status')) $data['status'] = $request->status;
+        if ($request->has('payment_status')) $data['payment_status'] = $request->payment_status;
+        
+        $order->update($data);
+        return back()->with('success', 'Đơn hàng đã được cập nhật!');
     }
 
     // Sliders

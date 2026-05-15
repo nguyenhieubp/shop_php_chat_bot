@@ -179,6 +179,67 @@
         transform: none;
         box-shadow: none;
     }
+
+    /* Payment Method Styles */
+    .payment-methods {
+        display: grid;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .payment-method-item {
+        border: 1px solid var(--border);
+        padding: 20px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .payment-method-item:hover {
+        border-color: var(--primary);
+        background: rgba(59, 130, 246, 0.02);
+    }
+
+    .payment-method-item input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #000;
+        cursor: pointer;
+    }
+
+    .payment-method-item.active {
+        border-color: #000;
+        background: #f8fafc;
+        border-width: 2px;
+    }
+
+    .payment-method-icon {
+        font-size: 24px;
+        width: 40px;
+        text-align: center;
+    }
+
+    .payment-method-text {
+        flex: 1;
+    }
+
+    .payment-method-title {
+        display: block;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--text);
+        margin-bottom: 2px;
+    }
+
+    .payment-method-desc {
+        display: block;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
 </style>
 @endsection
 
@@ -208,12 +269,33 @@
                         <textarea name="address" id="address" class="form-textarea" placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố..." required></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="notes">Ghi chú (Tùy chọn)</label>
-                        <textarea name="notes" id="notes" class="form-textarea" style="min-height: 80px;" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi đến..."></textarea>
+                    <div class="form-group" style="margin-top: 40px;">
+                        <label class="form-label">Phương thức thanh toán</label>
+                        <div class="payment-methods">
+                            <label class="payment-method-item active">
+                                <input type="radio" name="payment_method" value="cod" checked>
+                                <div class="payment-method-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                                <div class="payment-method-text">
+                                    <span class="payment-method-title">Thanh toán khi nhận hàng (COD)</span>
+                                    <span class="payment-method-desc">Thanh toán tiền mặt khi nhận hàng tại nhà</span>
+                                </div>
+                            </label>
+
+                            <label class="payment-method-item">
+                                <input type="radio" name="payment_method" value="vnpay">
+                                <div class="payment-method-icon">
+                                    <img src="https://sandbox.vnpayment.vn/paymentv2/Images/brands/logo-vnpay.png" alt="VNPay" style="height: 20px;">
+                                </div>
+                                <div class="payment-method-text">
+                                    <span class="payment-method-title">Thanh toán Online (VNPay)</span>
+                                    <span class="payment-method-desc">Thanh toán qua ứng dụng ngân hàng, thẻ ATM, Visa, Master...</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <input type="hidden" name="is_cart_order" value="1">
+                    <input type="hidden" name="total_amount" value="{{ $total }}">
                     @foreach($cart as $id => $item)
                         <input type="hidden" name="cart_items[]" value="{{ $id }}">
                     @endforeach
@@ -272,4 +354,16 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.querySelectorAll('.payment-method-item').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('.payment-method-item').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            this.querySelector('input').checked = true;
+        });
+    });
+</script>
 @endsection

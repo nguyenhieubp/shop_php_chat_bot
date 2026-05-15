@@ -11,7 +11,7 @@
     }
     .admin-table th {
         background: #f8fafc;
-        padding: 16px 20px;
+        padding: 12px 15px;
         font-size: 11px;
         font-weight: 800;
         text-transform: uppercase;
@@ -19,9 +19,10 @@
         color: #64748b;
         border-bottom: 1px solid #e2e8f0;
         text-align: left;
+        white-space: nowrap;
     }
     .admin-table td {
-        padding: 20px;
+        padding: 15px;
         vertical-align: middle;
         border-bottom: 1px solid #f1f5f9;
         transition: var(--transition);
@@ -73,6 +74,28 @@
         border-radius: 50%;
         background: currentColor;
     }
+    .payment-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-top: 5px;
+    }
+    .payment-paid {
+        background: #dcfce7;
+        color: #15803d;
+    }
+    .payment-pending {
+        background: #fef9c3;
+        color: #a16207;
+    }
+    .payment-failed {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
     .status-select {
         padding: 8px 12px;
         border: 1px solid #e2e8f0;
@@ -86,6 +109,77 @@
     .status-select:hover {
         border-color: var(--primary);
     }
+    .payment-select {
+        padding: 6px 12px;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-top: 5px;
+        display: inline-flex;
+        width: auto;
+        min-width: 110px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 10px;
+        padding-right: 24px;
+        transition: var(--transition);
+    }
+    .payment-select.paid { background: #ecfdf5; color: #059669; }
+    .payment-select.pending { background: #fffbeb; color: #b45309; }
+    .payment-select.failed { background: #fef2f2; color: #dc2626; }
+    .payment-select.failed { background: #fef2f2; color: #dc2626; }
+    .payment-select:hover { filter: brightness(0.95); }
+
+    /* Pagination Styles */
+    .pagination-wrapper {
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid #f1f5f9;
+        background: #fcfcfd;
+    }
+    .pagination {
+        display: flex;
+        gap: 5px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .page-item .page-link {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: var(--transition);
+    }
+    .page-item.active .page-link {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .page-item:not(.active):not(.disabled) .page-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: #fff9f9;
+    }
+
     .search-row input {
         width: 100%;
         padding: 8px 12px;
@@ -105,21 +199,23 @@
     </div>
 </div>
 
-<div class="card" style="padding: 0; overflow: hidden; border-radius: 20px;">
+<div class="card" style="padding: 0; overflow-x: auto; border-radius: 20px;">
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Thời gian</th>
-                <th>Thông tin khách</th>
-                <th>Sản phẩm quan tâm</th>
-                <th>Trạng thái</th>
-                <th style="text-align: right; padding-right: 35px;">Xử lý nhanh</th>
+                <th style="width: 140px;">Thời gian</th>
+                <th style="width: 180px;">Thông tin khách</th>
+                <th>Sản phẩm & Giá</th>
+                <th style="width: 140px;">Thanh toán</th>
+                <th style="width: 150px;">Trạng thái</th>
+                <th style="text-align: right; padding-right: 20px; width: 140px;">Xử lý</th>
             </tr>
             <tr class="search-row">
                 <th><input type="date"></th>
-                <th><input type="text" placeholder="Tìm tên/số điện thoại..."></th>
-                <th><input type="text" placeholder="Tìm tên sản phẩm..."></th>
-                <th><input type="text" placeholder="Lọc trạng thái..."></th>
+                <th><input type="text" placeholder="Tìm..."></th>
+                <th><input type="text" placeholder="Tìm sản phẩm..."></th>
+                <th></th>
+                <th><input type="text" placeholder="Lọc..."></th>
                 <th style="background: #f8fafc;"></th>
             </tr>
         </thead>
@@ -144,6 +240,22 @@
                         <i class="fa-solid fa-bag-shopping" style="color: var(--primary); opacity: 0.5; margin-right: 8px;"></i>
                         {{ $order->product->name }}
                     </div>
+                    <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">
+                        {{ number_format($order->total_amount) }}₫
+                    </div>
+                </td>
+                <td>
+                    <div style="font-size: 12px; font-weight: 700; color: #1e293b;">
+                        {{ strtoupper($order->payment_method) }}
+                    </div>
+                    <form action="{{ route('admin.order.update', $order->id) }}" method="POST">
+                        @csrf
+                        <select name="payment_status" class="payment-select {{ $order->payment_status }}" onchange="this.form.submit()">
+                            <option value="pending" @if($order->payment_status == 'pending') selected @endif>Chờ TT</option>
+                            <option value="paid" @if($order->payment_status == 'paid') selected @endif>Đã thanh toán</option>
+                            <option value="failed" @if($order->payment_status == 'failed') selected @endif>Thất bại</option>
+                        </select>
+                    </form>
                 </td>
                 <td>
                     @php
@@ -181,5 +293,10 @@
             @endforelse
         </tbody>
     </table>
+    @if($orders->hasPages())
+    <div class="pagination-wrapper">
+        {{ $orders->links() }}
+    </div>
+    @endif
 </div>
 @endsection

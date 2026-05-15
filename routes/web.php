@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BotManController;
+use App\Http\Controllers\PaymentController;
 
 Route::match(['get', 'post'], '/botman', [BotManController::class, 'handle']);
 
@@ -86,3 +87,7 @@ Route::get('/blog/{slug}', [App\Http\Controllers\BlogController::class, 'show'])
 
 // Feedback/Report Route
 Route::post('/feedback', [App\Http\Controllers\AdminController::class, 'storeFeedback'])->name('feedback.store');
+
+// VNPay Routes
+Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
+Route::get('/vnpay-ipn', [PaymentController::class, 'vnpayIPN'])->name('vnpay.ipn');

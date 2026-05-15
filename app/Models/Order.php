@@ -13,7 +13,11 @@ class Order extends Model
         'phone',
         'address',
         'notes',
-        'status'
+        'status',
+        'payment_method',
+        'payment_status',
+        'vnpay_txn_ref',
+        'total_amount'
     ];
 
     public function product(): BelongsTo
