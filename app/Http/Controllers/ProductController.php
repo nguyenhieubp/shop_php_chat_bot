@@ -132,8 +132,9 @@ class ProductController extends Controller
         $height = $request->input('height');
         $weight = $request->input('weight');
         $gender = $request->input('gender');
+        $sort = $request->input('sort');
 
-        $products = Product::query();
+        $products = Product::with('category');
 
         if ($query) {
             $products->where('name', 'LIKE', "%{$query}%");
