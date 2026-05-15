@@ -44,9 +44,10 @@ class AdminController extends Controller
         
         $orderCount = Order::count();
         $productCount = Product::count();
+        $customerCount = Order::distinct('phone')->count('phone');
         $recentOrders = Order::with('product')->latest()->take(10)->get();
         
-        return view('admin.dashboard', compact('orderCount', 'productCount', 'recentOrders'));
+        return view('admin.dashboard', compact('orderCount', 'productCount', 'customerCount', 'recentOrders'));
     }
 
     public function products()
@@ -86,20 +87,15 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            
             $destPath = public_path('uploads/products');
-            if (!file_exists($destPath)) {
-                mkdir($destPath, 0777, true);
-            }
-            
-            if (!is_writable($destPath)) {
-                return back()->with('error', 'Thư mục ' . $destPath . ' không có quyền ghi. Vui lòng kiểm tra OneDrive hoặc phân quyền folder.');
-            }
-            
+
             try {
-                $image->move($destPath, $imageName);
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
             } catch (\Exception $e) {
-                return back()->with('error', 'Lỗi khi lưu file: ' . $e->getMessage() . '. Thử chạy lệnh: icacls "public/uploads" /grant Everyone:(F) /T');
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage() . '. Nguyên nhân: Thư mục bị OneDrive khóa hoặc không có quyền ghi.');
             }
             $imagePath = 'uploads/products/' . $imageName;
         }
@@ -147,27 +143,21 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($product->image && file_exists(public_path($product->image))) {
-                unlink(public_path($product->image));
+            if ($product->image && \Illuminate\Support\Facades\File::exists(public_path($product->image))) {
+                \Illuminate\Support\Facades\File::delete(public_path($product->image));
             }
 
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            
             $destPath = public_path('uploads/products');
-            if (!file_exists($destPath)) {
-                mkdir($destPath, 0777, true);
-            }
-            
-            if (!is_writable($destPath)) {
-                return back()->with('error', 'Thư mục ' . $destPath . ' không có quyền ghi. Vui lòng kiểm tra OneDrive hoặc phân quyền folder.');
-            }
-            
+
             try {
-                $image->move($destPath, $imageName);
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
             } catch (\Exception $e) {
-                return back()->with('error', 'Lỗi khi lưu file: ' . $e->getMessage() . '. Thử chạy lệnh: icacls "public/uploads" /grant Everyone:(F) /T');
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage());
             }
             $product->image = 'uploads/products/' . $imageName;
         }
@@ -276,7 +266,16 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/posts'), $imageName);
+            $destPath = public_path('uploads/posts');
+
+            try {
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage());
+            }
             $imagePath = 'uploads/posts/' . $imageName;
         }
 
@@ -324,13 +323,22 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($post->image && file_exists(public_path($post->image))) {
-                unlink(public_path($post->image));
+            if ($post->image && \Illuminate\Support\Facades\File::exists(public_path($post->image))) {
+                \Illuminate\Support\Facades\File::delete(public_path($post->image));
             }
+
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/posts'), $imageName);
+            $destPath = public_path('uploads/posts');
+
+            try {
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage());
+            }
             $post->image = 'uploads/posts/' . $imageName;
         }
 
@@ -402,7 +410,16 @@ class AdminController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/sliders'), $imageName);
+            $destPath = public_path('uploads/sliders');
+
+            try {
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage());
+            }
             $imagePath = 'uploads/sliders/' . $imageName;
         }
 
@@ -436,14 +453,22 @@ class AdminController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($slider->image && file_exists(public_path($slider->image))) {
-                unlink(public_path($slider->image));
+            if ($slider->image && \Illuminate\Support\Facades\File::exists(public_path($slider->image))) {
+                \Illuminate\Support\Facades\File::delete(public_path($slider->image));
             }
 
             $image = $request->file('image');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('uploads/sliders'), $imageName);
+            $destPath = public_path('uploads/sliders');
+
+            try {
+                if (!\Illuminate\Support\Facades\File::exists($destPath)) {
+                    \Illuminate\Support\Facades\File::makeDirectory($destPath, 0777, true, true);
+                }
+                copy($image->getRealPath(), $destPath . DIRECTORY_SEPARATOR . $imageName);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Lỗi lưu file: ' . $e->getMessage());
+            }
             $slider->image = 'uploads/sliders/' . $imageName;
         }
 

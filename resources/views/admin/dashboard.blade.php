@@ -149,7 +149,7 @@
     <div class="stat-card" style="border-bottom: 3px solid #10b981;">
         <div class="stat-icon" style="color: #10b981;"><i class="fa-solid fa-users"></i></div>
         <div>
-            <div class="stat-value">1,280+</div>
+            <div class="stat-value">{{ number_format($customerCount) }}</div>
             <div class="stat-label">Khách hàng</div>
         </div>
     </div>
