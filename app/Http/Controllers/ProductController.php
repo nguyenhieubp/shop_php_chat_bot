@@ -108,11 +108,12 @@ class ProductController extends Controller
         foreach ($inputData as $key => $value) {
             if ($i == 1) {
                 $query .= '&' . urlencode($key) . "=" . urlencode($value);
+                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
             } else {
                 $query .= urlencode($key) . "=" . urlencode($value);
+                $hashdata .= urlencode($key) . "=" . urlencode($value);
                 $i = 1;
             }
-            $hashdata .= urlencode($key) . "=" . urlencode($value);
         }
 
         $vnp_Url = $vnp_Url . "?" . $query;
