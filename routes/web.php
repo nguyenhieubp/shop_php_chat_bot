@@ -51,6 +51,9 @@ Route::prefix('admin')->group(function () {
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::post('/order/{id}/update', [AdminController::class, 'updateOrder'])->name('admin.order.update');
     Route::post('/order/{id}/delete', [AdminController::class, 'deleteOrder'])->name('admin.order.delete');
+    Route::get('/orders/trash', [AdminController::class, 'trashOrders'])->name('admin.orders.trash');
+    Route::post('/order/{id}/restore', [AdminController::class, 'restoreOrder'])->name('admin.order.restore');
+    Route::post('/order/{id}/force-delete', [AdminController::class, 'forceDeleteOrder'])->name('admin.order.force_delete');
 
     // Chatbot Config
     Route::get('/bot-settings', [AdminController::class, 'botSettings'])->name('admin.bot.settings');

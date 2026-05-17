@@ -202,11 +202,14 @@
 @endsection
 
 @section('content')
-<div class="admin-header" style="margin-bottom: 40px;">
+<div class="admin-header" style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
     <div>
-        <h1 class="admin-title" style="font-size: 32px; font-weight: 800;">Quản lý Đơn Hàng</h1>
-        <p class="admin-subtitle">Theo dõi và xử lý các yêu cầu tư vấn và mua sắm từ khách hàng.</p>
+        <h1 class="admin-title" style="font-size: 32px; font-weight: 800; margin-bottom: 5px;">Quản lý Đơn Hàng</h1>
+        <p class="admin-subtitle" style="color: var(--text-secondary); margin: 0;">Theo dõi và xử lý các yêu cầu tư vấn và mua sắm từ khách hàng.</p>
     </div>
+    <a href="{{ route('admin.orders.trash') }}" class="btn btn-danger btn-sm" style="padding: 12px 24px; font-size: 14px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; text-decoration: none;">
+        <i class="fa-solid fa-trash-can"></i> Đơn hàng đã xóa
+    </a>
 </div>
 
 <div class="card" style="padding: 0; overflow-x: auto; border-radius: 20px;">

@@ -401,7 +401,30 @@ class AdminController extends Controller
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
         $order = Order::findOrFail($id);
         $order->delete();
-        return back()->with('success', 'Đơn hàng đã được xóa thành công!');
+        return back()->with('success', 'Đơn hàng đã được đưa vào Thùng rác!');
+    }
+
+    public function trashOrders()
+    {
+        if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
+        $orders = Order::onlyTrashed()->with('product')->latest()->get();
+        return view('admin.orders_trash', compact('orders'));
+    }
+
+    public function restoreOrder($id)
+    {
+        if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->restore();
+        return back()->with('success', 'Đơn hàng đã được khôi phục thành công!');
+    }
+
+    public function forceDeleteOrder($id)
+    {
+        if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->forceDelete();
+        return back()->with('success', 'Đơn hàng đã được xóa vĩnh viễn khỏi hệ thống!');
     }
 
     // Sliders
