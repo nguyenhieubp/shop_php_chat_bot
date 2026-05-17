@@ -208,7 +208,7 @@
                 <th>Sản phẩm & Giá</th>
                 <th style="width: 140px;">Thanh toán</th>
                 <th style="width: 150px;">Trạng thái</th>
-                <th style="text-align: right; padding-right: 20px; width: 140px;">Xử lý</th>
+                <th style="text-align: right; padding-right: 20px; width: 220px;">Xử lý</th>
             </tr>
             <tr class="search-row">
                 <th><input type="date"></th>
@@ -268,21 +268,29 @@
                         <span class="status-dot"></span>
                         {{ $statusText }}
                     </span>
-                </td>
-                <td style="text-align: right; padding-right: 35px;">
-                    <form action="{{ route('admin.order.update', $order->id) }}" method="POST">
-                        @csrf
-                        <select name="status" class="status-select" onchange="this.form.submit()">
-                            <option value="new" @if($order->status == 'new') selected @endif>Đánh dấu mới</option>
-                            <option value="pending" @if($order->status == 'pending') selected @endif>Đang xử lý</option>
-                            <option value="completed" @if($order->status == 'completed') selected @endif>Đã hoàn thành</option>
-                        </select>
-                    </form>
+                <td style="text-align: right; padding-right: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px;">
+                        <form action="{{ route('admin.order.update', $order->id) }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <select name="status" class="status-select" onchange="this.form.submit()" style="margin: 0; min-width: 130px;">
+                                <option value="new" @if($order->status == 'new') selected @endif>Đánh dấu mới</option>
+                                <option value="pending" @if($order->status == 'pending') selected @endif>Đang xử lý</option>
+                                <option value="completed" @if($order->status == 'completed') selected @endif>Đã hoàn thành</option>
+                            </select>
+                        </form>
+                        
+                        <form action="{{ route('admin.order.delete', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đơn hàng này?');" style="margin: 0; display: inline-block;">
+                            @csrf
+                            <button type="submit" style="background-color: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; transition: background-color 0.2s ease;" title="Xóa đơn hàng">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @empty
             <tr>
-                <td colspan="5" style="text-align: center; padding: 100px 20px;">
+                <td colspan="6" style="text-align: center; padding: 100px 20px;">
                     <div style="opacity: 0.2; margin-bottom: 20px;">
                         <i class="fa-solid fa-receipt" style="font-size: 80px;"></i>
                     </div>

@@ -396,6 +396,14 @@ class AdminController extends Controller
         return back()->with('success', 'Đơn hàng đã được cập nhật!');
     }
 
+    public function deleteOrder($id)
+    {
+        if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
+        $order = Order::findOrFail($id);
+        $order->delete();
+        return back()->with('success', 'Đơn hàng đã được xóa thành công!');
+    }
+
     // Sliders
     public function sliders()
     {

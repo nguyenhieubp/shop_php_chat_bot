@@ -50,6 +50,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::post('/order/{id}/update', [AdminController::class, 'updateOrder'])->name('admin.order.update');
+    Route::post('/order/{id}/delete', [AdminController::class, 'deleteOrder'])->name('admin.order.delete');
 
     // Chatbot Config
     Route::get('/bot-settings', [AdminController::class, 'botSettings'])->name('admin.bot.settings');
