@@ -183,10 +183,20 @@
     .search-row input {
         width: 100%;
         padding: 8px 12px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #cbd5e1;
         border-radius: 8px;
         font-size: 12px;
         background: white;
+        transition: all 0.15s ease-in-out;
+    }
+    .search-row input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        outline: none;
+    }
+    .search-row th {
+        padding: 8px 10px !important;
+        background: #f8fafc !important;
     }
 </style>
 @endsection
@@ -211,11 +221,11 @@
                 <th style="text-align: right; padding-right: 20px; width: 220px;">Xử lý</th>
             </tr>
             <tr class="search-row">
-                <th><input type="date"></th>
-                <th><input type="text" placeholder="Tìm..."></th>
-                <th><input type="text" placeholder="Tìm sản phẩm..."></th>
+                <th><input type="date" class="column-search"></th>
+                <th><input type="text" class="column-search" placeholder="Tìm..."></th>
+                <th><input type="text" class="column-search" placeholder="Tìm sản phẩm..."></th>
                 <th></th>
-                <th><input type="text" placeholder="Lọc..."></th>
+                <th><input type="text" class="column-search" placeholder="Lọc..."></th>
                 <th style="background: #f8fafc;"></th>
             </tr>
         </thead>

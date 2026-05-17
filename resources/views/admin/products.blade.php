@@ -105,18 +105,24 @@
         border-color: #ef4444;
         color: #ef4444;
     }
-    .search-row input {
+    .search-row input, .search-row select {
         width: 100%;
         padding: 8px 12px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid #cbd5e1;
         border-radius: 8px;
         font-size: 12px;
         background: white;
-        transition: var(--transition);
+        transition: all 0.15s ease-in-out;
+        height: 38px;
     }
-    .search-row input:focus {
+    .search-row input:focus, .search-row select:focus {
         border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         outline: none;
+    }
+    .search-row th {
+        padding: 8px 10px !important;
+        background: #f8fafc !important;
     }
 </style>
 @endsection
@@ -143,10 +149,17 @@
                 <th style="text-align: right; padding-right: 35px;">Thao tác</th>
             </tr>
             <tr class="search-row">
-                <th><input type="text" placeholder="Tìm tên sản phẩm..."></th>
-                <th><input type="text" placeholder="Lọc danh mục..."></th>
-                <th><input type="text" placeholder="Khoảng giá..."></th>
-                <th><input type="text" placeholder="Trạng thái..."></th>
+                <th><input type="text" class="column-search" placeholder="Tìm tên sản phẩm..."></th>
+                <th>
+                    <select class="column-search">
+                        <option value="">Tất cả danh mục</option>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                        @endforeach
+                    </select>
+                </th>
+                <th><input type="text" class="column-search" placeholder="Khoảng giá..."></th>
+                <th><input type="text" class="column-search" placeholder="Trạng thái..."></th>
                 <th style="background: #f8fafc;"></th>
             </tr>
         </thead>
