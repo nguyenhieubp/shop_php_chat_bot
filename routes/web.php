@@ -65,6 +65,7 @@ Route::prefix('admin')->group(function () {
 
     // Reports
     Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
+    Route::post('/reports/{id}/delete', [AdminController::class, 'deleteFeedback'])->name('admin.reports.delete');
 
     // Sliders
     Route::get('/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');

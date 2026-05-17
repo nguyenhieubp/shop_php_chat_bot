@@ -358,6 +358,14 @@ class AdminController extends Controller
         return view('admin.reports', compact('feedbacks'));
     }
 
+    public function deleteFeedback($id)
+    {
+        if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
+        $feedback = Feedback::findOrFail($id);
+        $feedback->delete();
+        return back()->with('success', 'Báo cáo/Phản hồi đã được xóa thành công!');
+    }
+
     public function storeFeedback(Request $request)
     {
         $request->validate([
