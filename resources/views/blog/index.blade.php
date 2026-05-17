@@ -91,7 +91,7 @@
     <section class="blog-header animate-fade">
         <div class="container">
             <h1>Tin tức & Bí quyết Làm đẹp</h1>
-            <p>Chia sẻ kiến thức chăm sóc da và phong cách sống hiện đại.</p>
+            <p>Chia sẻ và phong cách sống hiện đại.</p>
         </div>
     </section>
 

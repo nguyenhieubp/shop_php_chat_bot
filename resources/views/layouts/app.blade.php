@@ -38,6 +38,18 @@
             --primary: #60a5fa;
         }
 
+        /* Custom close X button stroke styling in parent page for BotMan widget */
+        #botmanWidgetRoot svg line {
+            stroke: #ff0000 !important; /* Make the stroke red! */
+            stroke-width: 2.5px !important; /* Make it thicker and highly visible! */
+        }
+        #botmanWidgetRoot svg {
+            transition: transform 0.2s ease !important;
+        }
+        #botmanWidgetRoot svg:hover {
+            transform: scale(1.2) !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
