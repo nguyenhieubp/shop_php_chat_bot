@@ -21,17 +21,13 @@ class BotManController extends Controller
     {
         $botman = app('botman');
 
-        $botman->hears('^(init|hi|hello|clear)$', function (BotMan $bot) use ($request) {
-            $question = Question::create(BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕'))
-                ->addButtons([
-                    Button::create(BotSetting::get('bot_start_btn', 'Bắt đầu'))->value('start'),
-                ]);
-            $bot->reply($question);
-        });
-
-        $botman->hears('^(start|bắt đầu|chào|menu)$', function (BotMan $bot) use ($request) {
+        $botman->hears('^(init|hi|hello|clear|start|bắt đầu|chào|menu)$', function (BotMan $bot) use ($request) {
             $request->session()->forget(['botman_step', 'botman_state']);
-            $question = Question::create(BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?'))
+            
+            $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
+                           BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+                           
+            $question = Question::create($welcomeMsg)
                 ->addButtons([
                     Button::create(BotSetting::get('bot_shopping_btn', '🚀 Bắt đầu mua sắm'))->value('start_fast'),
                     Button::create('👔 Tư vấn chọn size')->value('start_consultation'),

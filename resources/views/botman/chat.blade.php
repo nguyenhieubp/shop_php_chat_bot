@@ -146,5 +146,37 @@
 </head>
 <body>
     <script id="botmanWidget" src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/chat.js'></script>
+    <script>
+        // Tự động ẩn các tin nhắn trigger/whisper ngầm của người dùng (như 'init', 'hi', 'start', 'menu')
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) {
+                        // Tìm tất cả các thẻ li được thêm vào
+                        const bubbles = node.matches('li') ? [node] : Array.from(node.querySelectorAll('li'));
+                        bubbles.forEach(bubble => {
+                            const txt = bubble.textContent.trim().toLowerCase();
+                            // Nếu nội dung khớp hoàn toàn với các từ khóa kích hoạt, ẩn đi lập tức
+                            if (txt === 'init' || txt === 'hi' || txt === 'hello' || txt === 'start' || txt === 'menu') {
+                                bubble.style.display = 'none';
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        // Bắt đầu quan sát document.body ngay lập tức vì body luôn có sẵn
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Tự động kích hoạt luồng chào mừng 'init' sau khi iframe load xong và kết nối ổn định
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (window.parent && window.parent.botmanChatWidget) {
+                    window.parent.botmanChatWidget.whisper('init');
+                }
+            }, 250); // Đợi 250ms để websocket/http connection của widget bên trong iframe ổn định
+        });
+    </script>
 </body>
 </html>

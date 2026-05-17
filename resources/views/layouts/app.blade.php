@@ -410,6 +410,8 @@
             desktopWidth: 450,
             desktopHeight: 550,
             displayMessageTime: false,
+            sendWidgetOpenedEvent: true,
+            widgetOpenedEventData: 'init',
         };
     </script>
     <script src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/widget.js'></script>
@@ -418,17 +420,13 @@
         var wasChatOpened = false;
         window.addEventListener('chatOpenStateChange', function(event) {
             if (event.detail.isOpen && !wasChatOpened) {
-                // Gửi lệnh 'init' ngầm ngay khi mở chat để hiện nút Bắt đầu
-                window.botmanChatWidget.whisper('init');
                 wasChatOpened = true;
             }
         });
 
         // Đảm bảo nút Bắt đầu cũng hiện ra nếu khách load lại trang khi đang mở chat
         window.addEventListener('botmanWidgetReady', function() {
-            if (window.botmanChatWidget.opened()) {
-                window.botmanChatWidget.whisper('init');
-            }
+            // Sẽ được tự động kích hoạt bởi load event của iframe chat.blade.php
         });
 
         // AJAX Sync: Cập nhật Badge giỏ hàng khi Bot thêm hàng
