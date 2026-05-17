@@ -2,6 +2,39 @@
 
 @section('title', 'Danh sách Báo cáo & Phản hồi')
 
+@section('styles')
+<style>
+    /* Làm thon gọn padding của dòng bộ lọc để tối ưu hóa không gian hiển thị */
+    .search-row th {
+        padding: 8px 10px !important;
+        background: #f8fafc !important;
+        border-bottom: 2px solid #e2e8f0 !important;
+    }
+    
+    /* Làm đẹp các trường nhập liệu bộ lọc */
+    .column-search {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 8px 12px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        color: #334155 !important;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05) !important;
+        transition: all 0.15s ease-in-out !important;
+        background-color: #ffffff !important;
+    }
+    
+    /* Hiệu ứng khi focus */
+    .column-search:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(0,0,0,0.05) !important;
+        outline: none !important;
+    }
+</style>
+@endsection
+
 @section('content')
     <div id="feedback-list" class="card admin-section">
         <h2>Phản hồi & Báo cáo từ khách hàng</h2>
