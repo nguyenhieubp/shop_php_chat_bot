@@ -72,8 +72,8 @@
             </div>
         </header>
 
-        <div class="container">
-            <div class="post-cover animate-fade" style="overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 80px; color: #ccc;">
+        <div class="container" style="max-width: 950px;">
+            <div class="post-hero-img animate-fade" style="overflow: hidden;">
                 @if($post->image)
                     <img src="{{ asset($post->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
                 @else

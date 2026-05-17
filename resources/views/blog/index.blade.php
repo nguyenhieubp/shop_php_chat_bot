@@ -41,12 +41,26 @@
 
     .post-thumb {
         height: 220px;
-        background: #f0f0f0;
+        background: #f8fafc;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 50px;
         color: #ccc;
+        overflow: hidden;
+        position: relative;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .post-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .post-card:hover .post-thumb img {
+        transform: scale(1.05);
     }
 
     .post-content {
@@ -99,7 +113,13 @@
         <div class="blog-grid">
             @foreach($posts as $post)
             <div class="post-card animate-fade">
-                <div class="post-thumb">📰</div>
+                <div class="post-thumb">
+                    @if($post->image)
+                        <img src="{{ asset($post->image) }}" alt="{{ $post->title }}">
+                    @else
+                        📰
+                    @endif
+                </div>
                 <div class="post-content">
                     <span class="post-date">{{ $post->created_at->format('d M, Y') }}</span>
                     <h2 class="post-title">{{ $post->title }}</h2>
