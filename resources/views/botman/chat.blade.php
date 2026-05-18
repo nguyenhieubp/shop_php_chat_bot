@@ -14,6 +14,7 @@
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #ffffff;
+            position: relative;
         }
 
         /* Message Entry Animation */
@@ -31,7 +32,7 @@
         #messageArea {
             background-color: #ffffff !important;
             padding: 20px 15px !important;
-            height: calc(100vh - 80px) !important;
+            height: calc(100% - 80px) !important;
             overflow-y: auto !important;
             padding-bottom: 20px !important;
             box-sizing: border-box !important;
@@ -118,11 +119,12 @@
             border-top: 1px solid #000000 !important;
             padding: 15px !important;
             background: #ffffff !important;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            box-sizing: border-box;
-            z-index: 9999;
+            position: absolute !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            z-index: 9999 !important;
         }
 
         #userText {
