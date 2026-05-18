@@ -528,7 +528,7 @@
                 if (prod.image.startsWith('http')) {
                     imgEl.src = prod.image;
                 } else {
-                    imgEl.src = '/uploads/product/' + prod.image;
+                    imgEl.src = '/' + prod.image.replace(/^\/+/, '');
                 }
                 imgEl.style.display = 'block';
             } else {
