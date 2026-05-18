@@ -17,6 +17,17 @@
             position: relative;
         }
 
+        .chat {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+        }
+
         /* Message Entry Animation */
         @keyframes slideInUp {
             from {
@@ -32,7 +43,7 @@
         #messageArea {
             background-color: #ffffff !important;
             padding: 20px 15px !important;
-            height: calc(100% - 80px) !important;
+            flex: 1 !important;
             overflow-y: auto !important;
             padding-bottom: 20px !important;
             box-sizing: border-box !important;
@@ -119,12 +130,10 @@
             border-top: 1px solid #000000 !important;
             padding: 15px !important;
             background: #ffffff !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 0 !important;
             width: 100% !important;
             box-sizing: border-box !important;
             z-index: 9999 !important;
+            position: relative !important;
         }
 
         #userText {
