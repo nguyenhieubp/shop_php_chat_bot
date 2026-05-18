@@ -50,6 +50,42 @@
             transform: scale(1.2) !important;
         }
 
+        /* Fullscreen mode override for BotMan Widget Container */
+        #botmanWidgetRoot.botman-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999999 !important;
+        }
+
+        #botmanWidgetRoot.botman-fullscreen .chat-container {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            bottom: 0 !important;
+            right: 0 !important;
+            border-radius: 0px !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+
+        #botmanWidgetRoot.botman-fullscreen iframe#chatBotManFrame {
+            width: 100% !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            border-radius: 0px !important;
+        }
+
+        #botmanWidgetRoot.botman-fullscreen .chat-button {
+            display: none !important;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -433,6 +469,13 @@
         window.addEventListener('chatOpenStateChange', function(event) {
             if (event.detail.isOpen && !wasChatOpened) {
                 wasChatOpened = true;
+            }
+            // Nếu đóng chat thì thoát chế độ toàn màn hình
+            if (!event.detail.isOpen) {
+                const parentRoot = document.getElementById('botmanWidgetRoot');
+                if (parentRoot) {
+                    parentRoot.classList.remove('botman-fullscreen');
+                }
             }
         });
 

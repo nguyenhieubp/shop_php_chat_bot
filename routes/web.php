@@ -96,3 +96,5 @@ Route::post('/feedback', [App\Http\Controllers\AdminController::class, 'storeFee
 // VNPay Routes
 Route::get('/vnpay-return', [PaymentController::class, 'vnpayReturn'])->name('vnpay.return');
 Route::get('/vnpay-ipn', [PaymentController::class, 'vnpayIPN'])->name('vnpay.ipn');
+
+

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BotMan Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         html, body {
             height: 100%;
@@ -135,18 +136,111 @@
             box-sizing: border-box;
         }
 
-        /* Hide Timestamps & About */
         .chat .messages li i, 
         .chat .messages li span.time,
         .chat .about, 
         .chat .header {
             display: none !important;
         }
+
+        /* Floating Fullscreen Button */
+        #fullscreenToggleBtn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100000;
+            transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        #fullscreenToggleBtn:hover {
+            background: #ff0000;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
+    <button id="fullscreenToggleBtn" onclick="toggleFullScreen()" title="Phóng to">
+        <i class="fa-solid fa-expand"></i>
+    </button>
     <script id="botmanWidget" src='https://cdn.jsdelivr.net/npm/botman-web-widget@0/build/js/chat.js'></script>
     <script>
+        function toggleFullScreen() {
+            const parentRoot = window.parent.document.getElementById('botmanWidgetRoot');
+            if (parentRoot) {
+                parentRoot.classList.toggle('botman-fullscreen');
+                
+                const iframe = window.parent.document.getElementById('chatBotManFrame');
+                const btn = document.getElementById('fullscreenToggleBtn');
+                
+                if (parentRoot.classList.contains('botman-fullscreen')) {
+                    btn.innerHTML = '<i class="fa-solid fa-compress"></i>';
+                    btn.setAttribute('title', 'Thu nhỏ');
+                    
+                    if (iframe) {
+                        const wrapper = iframe.parentElement;
+                        if (wrapper) {
+                            // Save original styles
+                            wrapper.setAttribute('data-orig-style', wrapper.getAttribute('style') || '');
+                            iframe.setAttribute('data-orig-style', iframe.getAttribute('style') || '');
+                            
+                            // Apply fullscreen styles
+                            wrapper.style.setProperty('position', 'fixed', 'important');
+                            wrapper.style.setProperty('top', '0', 'important');
+                            wrapper.style.setProperty('left', '0', 'important');
+                            wrapper.style.setProperty('width', '100vw', 'important');
+                            wrapper.style.setProperty('height', '100vh', 'important');
+                            wrapper.style.setProperty('max-width', '100%', 'important');
+                            wrapper.style.setProperty('max-height', '100%', 'important');
+                            wrapper.style.setProperty('bottom', '0', 'important');
+                            wrapper.style.setProperty('right', '0', 'important');
+                            wrapper.style.setProperty('border-radius', '0px', 'important');
+                            wrapper.style.setProperty('margin', '0', 'important');
+                            wrapper.style.setProperty('box-shadow', 'none', 'important');
+                            
+                            iframe.style.setProperty('width', '100%', 'important');
+                            iframe.style.setProperty('height', '100%', 'important');
+                            iframe.style.setProperty('max-height', '100%', 'important');
+                            iframe.style.setProperty('border-radius', '0px', 'important');
+                        }
+                    }
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-expand"></i>';
+                    btn.setAttribute('title', 'Phóng to');
+                    
+                    if (iframe) {
+                        const wrapper = iframe.parentElement;
+                        if (wrapper) {
+                            // Restore original styles
+                            const origStyle = wrapper.getAttribute('data-orig-style');
+                            if (origStyle) {
+                                wrapper.setAttribute('style', origStyle);
+                            } else {
+                                wrapper.removeAttribute('style');
+                            }
+                            
+                            const iframeOrigStyle = iframe.getAttribute('data-orig-style');
+                            if (iframeOrigStyle) {
+                                iframe.setAttribute('style', iframeOrigStyle);
+                            } else {
+                                iframe.removeAttribute('style');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         // Tự động ẩn các tin nhắn trigger/whisper ngầm của người dùng (như 'init', 'hi', 'start', 'menu')
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
