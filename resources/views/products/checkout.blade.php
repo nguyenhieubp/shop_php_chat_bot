@@ -44,7 +44,7 @@
                     
                     <div style="margin-bottom: 40px;">
                         <h3 style="font-size: 18px; margin-bottom: 25px; border-left: 4px solid var(--primary); padding-left: 15px;">1. Thông tin giao hàng</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                             <div class="form-group">
                                 <label style="display: block; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: var(--text-main);">Họ và tên <span style="color: var(--primary);">*</span></label>
                                 <input type="text" name="customer_name" class="checkout-input" placeholder="Ví dụ: Nguyễn Văn A" required>
@@ -53,6 +53,14 @@
                                 <label style="display: block; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: var(--text-main);">Số điện thoại <span style="color: var(--primary);">*</span></label>
                                 <input type="text" name="phone" class="checkout-input" placeholder="090 xxx xxxx" required>
                             </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: var(--text-main);">Địa chỉ giao hàng chi tiết <span style="color: var(--primary);">*</span></label>
+                            <textarea name="address" class="checkout-input" style="height: 100px; resize: vertical;" placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: var(--text-main);">Ghi chú đơn hàng (Tùy chọn)</label>
+                            <textarea name="notes" class="checkout-input" style="height: 80px; resize: vertical;" placeholder="Ghi chú về thời gian giao hàng, chỉ dẫn địa chỉ..."></textarea>
                         </div>
                     </div>
 
