@@ -130,7 +130,7 @@
                 <label class="form-label"><i class="fa-solid fa-image-polaroid"></i> Chọn hình ảnh</label>
                 <div style="position: relative;">
                     <input type="file" name="image" id="sliderImageInput" class="form-input" accept="image/*" required>
-                    <p style="font-size: 12px; color: #64748b; margin-top: -15px;">Kích thước tối ưu: 1920x800px. Dung lượng < 2MB.</p>
+                    <p style="font-size: 12px; color: #64748b; margin-top: -15px;">Kích thước tối ưu: 1920x800px. Dung lượng < 10MB.</p>
                 </div>
             </div>
 

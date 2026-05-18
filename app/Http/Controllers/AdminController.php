@@ -446,7 +446,7 @@ class AdminController extends Controller
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
         
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
             'position' => 'nullable|integer',
         ]);
 
@@ -492,7 +492,7 @@ class AdminController extends Controller
         $slider = Slider::findOrFail($id);
 
         $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'position' => 'nullable|integer',
         ]);
 
