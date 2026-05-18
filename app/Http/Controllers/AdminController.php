@@ -77,7 +77,7 @@ class AdminController extends Controller
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
         
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -102,7 +102,7 @@ class AdminController extends Controller
 
         Product::create([
             'name' => $request->name,
-            'slug' => \Illuminate\Support\Str::slug($request->name) . '-' . time(),
+            'slug' => \Illuminate\Support\Str::limit(\Illuminate\Support\Str::slug($request->name), 200, '') . '-' . time(),
             'category_id' => $request->category_id,
             'price' => $request->price,
             'description' => $request->description,
@@ -136,7 +136,7 @@ class AdminController extends Controller
         $product = Product::findOrFail($id);
 
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string',
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -164,7 +164,7 @@ class AdminController extends Controller
 
         $product->update([
             'name' => $request->name,
-            'slug' => \Illuminate\Support\Str::slug($request->name) . '-' . time(),
+            'slug' => \Illuminate\Support\Str::limit(\Illuminate\Support\Str::slug($request->name), 200, '') . '-' . time(),
             'category_id' => $request->category_id,
             'price' => $request->price,
             'description' => $request->description,
