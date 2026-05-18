@@ -188,8 +188,13 @@
                     btn.setAttribute('title', 'Thu nhỏ');
                     
                     if (iframe) {
-                        const wrapper = iframe.parentElement;
-                        if (wrapper) {
+                        // Traverse up to find outermost container under #botmanWidgetRoot
+                        let wrapper = iframe;
+                        while (wrapper.parentElement && wrapper.parentElement.id !== 'botmanWidgetRoot') {
+                            wrapper = wrapper.parentElement;
+                        }
+                        
+                        if (wrapper && wrapper !== iframe) {
                             // Save original styles
                             wrapper.setAttribute('data-orig-style', wrapper.getAttribute('style') || '');
                             iframe.setAttribute('data-orig-style', iframe.getAttribute('style') || '');
@@ -219,8 +224,13 @@
                     btn.setAttribute('title', 'Phóng to');
                     
                     if (iframe) {
-                        const wrapper = iframe.parentElement;
-                        if (wrapper) {
+                        // Traverse up to find outermost container under #botmanWidgetRoot
+                        let wrapper = iframe;
+                        while (wrapper.parentElement && wrapper.parentElement.id !== 'botmanWidgetRoot') {
+                            wrapper = wrapper.parentElement;
+                        }
+                        
+                        if (wrapper && wrapper !== iframe) {
                             // Restore original styles
                             const origStyle = wrapper.getAttribute('data-orig-style');
                             if (origStyle) {
