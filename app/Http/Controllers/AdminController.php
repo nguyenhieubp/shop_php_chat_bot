@@ -49,12 +49,13 @@ class AdminController extends Controller
 
         $query = Order::with('product')->where('status', 'completed');
 
-        // Customer Search
+        // Customer Search (Name, Phone, Address)
         if ($request->filled('search_customer')) {
             $search = $request->search_customer;
             $query->where(function($q) use ($search) {
                 $q->where('customer_name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
             });
         }
 
@@ -93,12 +94,13 @@ class AdminController extends Controller
             $query->whereDate('created_at', $request->search_date);
         }
 
-        // Filter by Customer Name or Phone
+        // Filter by Customer Name, Phone, or Address
         if ($request->filled('search_customer')) {
             $search = $request->search_customer;
             $query->where(function($q) use ($search) {
                 $q->where('customer_name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
             });
         }
 
