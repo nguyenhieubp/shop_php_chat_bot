@@ -112,6 +112,10 @@
         border-radius: 50%;
         background: currentColor;
     }
+    .dashboard-search-input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    }
 </style>
 @endsection
 
@@ -132,8 +136,8 @@
 </div>
 
 <div class="dashboard-grid">
-    <div class="stat-card">
-        <div class="stat-icon"><i class="fa-solid fa-spa"></i></div>
+    <div class="stat-card" style="border-bottom: 3px solid #3b82f6;">
+        <div class="stat-icon" style="color: #3b82f6;"><i class="fa-solid fa-spa"></i></div>
         <div>
             <div class="stat-value">{{ $productCount }}</div>
             <div class="stat-label">Sản phẩm</div>
@@ -153,12 +157,20 @@
             <div class="stat-label">Khách hàng</div>
         </div>
     </div>
+    <div class="stat-card" style="border-bottom: 3px solid #ec4899;">
+        <div class="stat-icon" style="color: #ec4899;"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div>
+            <div class="stat-value">{{ number_format($totalRevenue) }}₫</div>
+            <div class="stat-label">Tổng doanh thu</div>
+        </div>
+    </div>
 </div>
 
+<form method="GET" action="{{ route('admin.dashboard') }}" id="dashboardSearchForm" style="margin: 0;">
 <div class="card" style="padding: 0; overflow: hidden; border-radius: 20px;">
     <div style="padding: 25px 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff;">
         <h3 style="font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Xử Lý Đơn Hàng Gần Đây
+            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Đơn Hàng Đã Hoàn Thành Gần Đây
         </h3>
         <a href="{{ route('admin.orders') }}" style="font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none;">Xem tất cả <i class="fa-solid fa-arrow-right"></i></a>
     </div>
@@ -166,9 +178,25 @@
         <thead>
             <tr>
                 <th>Khách hàng</th>
-                <th>Sản phẩm đặt mua</th>
+                <th>Sản phẩm & Giá</th>
                 <th>Trạng thái</th>
                 <th style="text-align: right; padding-right: 35px;">Thời gian</th>
+            </tr>
+            <tr class="search-row">
+                <th style="padding: 8px 10px !important; background: #f8fafc !important;">
+                    <input type="text" name="search_customer" class="dashboard-search-input" placeholder="Tìm tên/SĐT..." value="{{ request('search_customer') }}" style="padding: 8px 12px; font-size: 12px; width: 100%; border: 1px solid var(--border); border-radius: 8px; outline: none; background: white; transition: var(--transition);">
+                </th>
+                <th style="padding: 8px 10px !important; background: #f8fafc !important;">
+                    <input type="text" name="search_product" class="dashboard-search-input" placeholder="Tìm sản phẩm..." value="{{ request('search_product') }}" style="padding: 8px 12px; font-size: 12px; width: 100%; border: 1px solid var(--border); border-radius: 8px; outline: none; background: white; transition: var(--transition);">
+                </th>
+                <th style="padding: 8px 10px !important; background: #f8fafc !important;"></th>
+                <th style="padding: 8px 10px !important; background: #f8fafc !important; text-align: center; vertical-align: middle;">
+                    @if(request()->anyFilled(['search_customer', 'search_product']))
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-sm" style="background: #f1f5f9; color: #475569; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; justify-content: center; box-shadow: var(--shadow-sm);">
+                            <i class="fa-solid fa-xmark"></i> Xóa lọc
+                        </a>
+                    @endif
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -180,6 +208,9 @@
                 </td>
                 <td>
                     <div style="font-weight: 700; color: #475569; font-size: 13px;">{{ $order->product->name }}</div>
+                    <div style="font-size: 12px; color: #94a3b8; font-weight: 600; margin-top: 4px;">
+                        {{ number_format($order->total_amount) }}₫
+                    </div>
                 </td>
                 <td>
                     @php
@@ -194,8 +225,9 @@
                     </span>
                 </td>
                 <td style="text-align: right; padding-right: 35px;">
-                    <div style="font-size: 12px; font-weight: 700; color: #64748b;">
-                        {{ $order->created_at->diffForHumans() }}
+                    <div style="font-size: 13px; font-weight: 700; color: #64748b;">
+                        <i class="fa-regular fa-clock" style="margin-right: 5px; opacity: 0.5;"></i>
+                        {{ $order->updated_at->format('d/m/Y H:i') }}
                     </div>
                 </td>
             </tr>
@@ -205,11 +237,39 @@
                     <div style="opacity: 0.1; margin-bottom: 15px;">
                         <i class="fa-solid fa-inbox" style="font-size: 60px;"></i>
                     </div>
-                    <p style="color: #94a3b8; font-weight: 700;">Chưa có đơn hàng nào trong hôm nay.</p>
+                    <p style="color: #94a3b8; font-weight: 700;">Chưa có đơn hàng nào đã hoàn thành.</p>
                 </td>
             </tr>
             @endforelse
         </tbody>
     </table>
+    @if($recentOrders->hasPages())
+    <div class="pagination-wrapper" style="display: flex; justify-content: center; padding: 20px 0; border-top: 1px solid var(--border);">
+        {{ $recentOrders->links() }}
+    </div>
+    @endif
 </div>
+</form>
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('dashboardSearchForm');
+        const inputs = form.querySelectorAll('.dashboard-search-input');
+        
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                form.submit();
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
+@endsection
 @endsection

@@ -38,16 +38,40 @@ class AdminController extends Controller
         return redirect()->route('admin.login');
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
         
         $orderCount = Order::count();
         $productCount = Product::count();
         $customerCount = Order::distinct('phone')->count('phone');
-        $recentOrders = Order::with('product')->latest()->take(10)->get();
+        $totalRevenue = Order::whereIn('status', ['pending', 'completed'])->sum('total_amount');
+
+        $query = Order::with('product')->where('status', 'completed');
+
+        // Customer Search
+        if ($request->filled('search_customer')) {
+            $search = $request->search_customer;
+            $query->where(function($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Product Search
+        if ($request->filled('search_product')) {
+            $searchProduct = $request->search_product;
+            $query->whereHas('product', function($q) use ($searchProduct) {
+                $q->where('name', 'like', "%{$searchProduct}%");
+            });
+        }
+
+        $recentOrders = $query->latest('updated_at')->paginate(10);
         
-        return view('admin.dashboard', compact('orderCount', 'productCount', 'customerCount', 'recentOrders'));
+        // Append query parameters to pagination links
+        $recentOrders->appends($request->query());
+        
+        return view('admin.dashboard', compact('orderCount', 'productCount', 'customerCount', 'recentOrders', 'totalRevenue'));
     }
 
     public function products()
@@ -58,10 +82,44 @@ class AdminController extends Controller
         return view('admin.products', compact('products', 'categories'));
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
-        $orders = Order::with('product')->latest()->paginate(10);
+        
+        $query = Order::with('product');
+
+        // Filter by date
+        if ($request->filled('search_date')) {
+            $query->whereDate('created_at', $request->search_date);
+        }
+
+        // Filter by Customer Name or Phone
+        if ($request->filled('search_customer')) {
+            $search = $request->search_customer;
+            $query->where(function($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by Product Name
+        if ($request->filled('search_product')) {
+            $searchProduct = $request->search_product;
+            $query->whereHas('product', function($q) use ($searchProduct) {
+                $q->where('name', 'like', "%{$searchProduct}%");
+            });
+        }
+
+        // Filter by Status
+        if ($request->filled('filter_status')) {
+            $query->where('status', $request->filter_status);
+        }
+
+        $orders = $query->latest()->paginate(10);
+        
+        // Append query strings to pagination links
+        $orders->appends($request->query());
+
         return view('admin.orders', compact('orders'));
     }
 
