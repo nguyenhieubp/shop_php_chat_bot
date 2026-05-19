@@ -157,8 +157,9 @@ class BotManController extends Controller
         });
 
         $botman->hears('send_feedback', function (BotMan $bot) use ($request) {
-            $request->session()->put('botman_step', 'askFeedback');
-            $question = Question::create(BotSetting::get('bot_feedback_intro', 'Chào bạn, chúng tôi luôn lắng nghe ý kiến từ khách hàng. Vui lòng nhập nội dung góp ý của bạn:'))
+            $request->session()->put('botman_state', ['flow' => 'feedback']);
+            $request->session()->put('botman_step', 'askFeedbackPhone');
+            $question = Question::create('Chào bạn, chúng tôi luôn lắng nghe ý kiến từ khách hàng. Vui lòng cho biết Số Điện Thoại của bạn:')
                 ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
             $bot->reply($question);
         });
@@ -261,7 +262,8 @@ class BotManController extends Controller
                     'askAddress' => 'askPhone',
                     'confirmOrder' => 'askAddress',
                     'askTrackPhone' => 'menu',
-                    'askFeedback' => 'menu',
+                    'askFeedbackPhone' => 'menu',
+                    'askFeedbackMessage' => 'askFeedbackPhone',
                 ];
                 $step = $prevSteps[$step] ?? 'menu';
                 
@@ -321,10 +323,14 @@ class BotManController extends Controller
                     $bot->reply(BotSetting::get('bot_back_menu_msg', 'Gõ "menu" để quay lại.'));
                     $request->session()->forget(['botman_step', 'botman_state']);
                     return;
-                } elseif ($step === 'askFeedback') {
+                } elseif ($step === 'askFeedbackPhone') {
+                    if (trim($message) === '') return $bot->reply('Vui lòng nhập số điện thoại:');
+                    $state['feedbackPhone'] = $message;
+                    $step = 'askFeedbackMessage';
+                } elseif ($step === 'askFeedbackMessage') {
                     Feedback::create([
                         'name' => 'Khách từ Chatbot',
-                        'contact' => 'N/A',
+                        'contact' => $state['feedbackPhone'] ?? 'N/A',
                         'subject' => 'Góp ý qua Chatbot',
                         'message' => $message
                     ]);
@@ -388,7 +394,11 @@ class BotManController extends Controller
             $request->session()->put('botman_state', $state);
 
             // Render Next Question
-            if ($step === 'askHeight') {
+            if ($step === 'askFeedbackMessage') {
+                $question = Question::create(BotSetting::get('bot_feedback_intro', 'Vui lòng nhập nội dung góp ý của bạn:'))
+                    ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                $bot->reply($question);
+            } elseif ($step === 'askHeight') {
                 $question = Question::create(BotSetting::get('bot_ask_height', 'Chiều cao của bạn là bao nhiêu cm? (VD: 170)'))
                     ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
                 $bot->reply($question);
