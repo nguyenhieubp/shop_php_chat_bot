@@ -350,6 +350,53 @@
         letter-spacing: 0.2em;
     }
 
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 40px;
+        margin-bottom: 60px;
+    }
+
+    .page-btn {
+        width: 44px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .page-btn:hover:not(:disabled) {
+        background: var(--bg);
+        border-color: var(--text);
+    }
+
+    .page-btn.active {
+        background: var(--text);
+        color: var(--surface);
+        border-color: var(--text);
+    }
+    
+    [data-theme="dark"] .page-btn.active {
+        background: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+    }
+
+    .page-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+
     @media (max-width: 768px) {
         .stat-number { font-size: 48px; }
         .slide-title { font-size: 50px; }
@@ -459,6 +506,9 @@
                 </div>
             @endforeach
         </div>
+        
+        <!-- Pagination Container -->
+        <div id="pagination-container" class="pagination-container"></div>
 
         <!-- Stats Section -->
         <section class="stats-banner">
@@ -489,7 +539,7 @@
         const searchInput = document.getElementById('product-search');
 
         // Filter Logic
-        async function fetchProducts() {
+        async function fetchProducts(page = 1) {
             const activeCat = document.querySelector('.cat-pill.active').getAttribute('data-category');
             const sortVal = sortSelect.value;
             const query = searchInput.value;
@@ -501,10 +551,12 @@
                 url.searchParams.append('query', query);
                 url.searchParams.append('category_id', activeCat);
                 url.searchParams.append('sort', sortVal);
+                url.searchParams.append('page', page);
 
                 const res = await fetch(url);
-                const products = await res.json();
-                renderProducts(products);
+                const paginationData = await res.json();
+                renderProducts(paginationData.data);
+                renderPagination(paginationData);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -512,9 +564,46 @@
             }
         }
 
+        function renderPagination(paginationData) {
+            const container = document.getElementById('pagination-container');
+            container.innerHTML = '';
+
+            if (paginationData.last_page <= 1) {
+                return;
+            }
+
+            const currentPage = paginationData.current_page;
+            const lastPage = paginationData.last_page;
+
+            // Prev button
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => fetchProducts(currentPage - 1));
+            container.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= lastPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.innerText = i;
+                pageBtn.addEventListener('click', () => fetchProducts(i));
+                container.appendChild(pageBtn);
+            }
+
+            // Next button
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === lastPage;
+            nextBtn.addEventListener('click', () => fetchProducts(currentPage + 1));
+            container.appendChild(nextBtn);
+        }
+
         function renderProducts(products) {
             productGrid.innerHTML = '';
-            if (products.length === 0) {
+            if (!products || products.length === 0) {
                 productGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 100px; font-size: 20px; font-weight: 700; color: var(--text-muted);">Không tìm thấy sản phẩm phù hợp.</div>';
                 return;
             }
@@ -549,14 +638,17 @@
             });
         }
 
+        // Tự động load sản phẩm lần đầu
+        fetchProducts(1);
+
         catPills.forEach(p => p.addEventListener('click', function() {
             catPills.forEach(x => x.classList.remove('active'));
             this.classList.add('active');
-            fetchProducts();
+            fetchProducts(1);
         }));
 
-        sortSelect.addEventListener('change', fetchProducts);
-        searchInput.addEventListener('input', debounce(fetchProducts, 500));
+        sortSelect.addEventListener('change', () => fetchProducts(1));
+        searchInput.addEventListener('input', debounce(() => fetchProducts(1), 500));
 
         function debounce(f, w) {
             let t;
