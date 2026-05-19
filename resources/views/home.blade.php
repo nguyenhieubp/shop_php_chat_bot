@@ -202,7 +202,7 @@
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 0;
+        padding: 12px;
         transition: var(--transition);
         display: flex;
         flex-direction: column;
@@ -230,6 +230,7 @@
         aspect-ratio: 3/4;
         overflow: hidden;
         background: #f1f1f1;
+        border-radius: 8px;
     }
 
     .product-image-wrapper img {
@@ -292,15 +293,12 @@
 
     .product-meta {
         text-align: left;
-    }
-
-    .product-meta {
-        padding: 4px 8px 8px 8px;
+        padding: 12px 0 0 0;
     }
 
     .product-details-box {
-        margin-top: 10px;
-        padding: 0 5px;
+        margin-top: 0;
+        padding: 0;
     }
 
     .product-brand {
