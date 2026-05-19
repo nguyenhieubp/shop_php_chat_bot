@@ -58,13 +58,13 @@
             box-sizing: border-box !important;
         }
 
-        .chat .messages {
+        .chat {
             padding: 0 !important;
             margin: 0 !important;
             list-style: none !important;
         }
 
-        .chat .messages li {
+        .chat li {
             animation: slideInUp 0.4s cubic-bezier(0.19, 1, 0.22, 1) both;
             margin-bottom: 12px !important;
             list-style: none !important;
@@ -74,12 +74,12 @@
         }
 
         /* Bot Message Bubbles (Left Side) */
-        .chat .messages li:not(.visitor) {
+        .chat li:not(.visitor) {
             background: #f1f5f9 !important;
             color: #0f172a !important;
             border: none !important;
             border-radius: 18px !important;
-            border-top-left-radius: 4px !important;
+            border-bottom-left-radius: 4px !important;
             padding: 12px 16px !important;
             font-size: 14px !important;
             line-height: 1.5 !important;
@@ -88,17 +88,17 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
         }
 
-        .chat .messages li:not(.visitor)::before {
+        .chat li:not(.visitor)::before {
             display: none !important;
         }
 
         /* User Message Bubbles (Right Side) */
-        .chat .messages li.visitor {
+        .chat li.visitor {
             background: #000000 !important;
             color: #ffffff !important;
             border: none !important;
             border-radius: 18px !important;
-            border-top-right-radius: 4px !important;
+            border-bottom-right-radius: 4px !important;
             padding: 12px 16px !important;
             font-size: 14px !important;
             font-weight: 500 !important;
@@ -107,7 +107,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
         }
 
-        .chat .messages li.visitor::before {
+        .chat li.visitor::before {
             display: none !important;
         }
 
@@ -287,8 +287,8 @@
             border-color: #ef4444;
         }
 
-        .chat .messages li i, 
-        .chat .messages li span.time,
+        .chat li i, 
+        .chat li span.time,
         .chat .about, 
         .chat .header {
             display: none !important;
