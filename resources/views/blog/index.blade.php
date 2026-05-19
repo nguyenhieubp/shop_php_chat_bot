@@ -19,24 +19,47 @@
 
     .blog-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 40px;
         margin-bottom: 60px;
     }
 
+    @media (max-width: 1024px) {
+        .blog-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .blog-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+
     .post-card {
-        background: var(--card-bg);
+        background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 12px;
         overflow: hidden;
         transition: var(--transition);
         display: flex;
         flex-direction: column;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    [data-theme="dark"] .post-card {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.15);
     }
 
     .post-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.12), 0 6px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="dark"] .post-card:hover {
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.45), 0 6px 10px rgba(0, 0, 0, 0.25);
     }
 
     .post-thumb {
