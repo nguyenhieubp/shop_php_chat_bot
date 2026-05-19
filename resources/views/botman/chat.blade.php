@@ -148,7 +148,7 @@
         #userText {
             border-radius: 30px !important;
             border: 1px solid #e2e8f0 !important;
-            padding: 12px 18px !important;
+            padding: 12px 18px 12px 45px !important;
             margin: 0 15px 15px 15px !important;
             font-family: inherit !important;
             font-size: 14px !important;
@@ -170,6 +170,121 @@
 
         a.banner {
             display: none !important;
+        }
+
+        #botMenuBtn {
+            position: absolute !important;
+            left: 22px !important;
+            bottom: 25px !important;
+            background: transparent !important;
+            border: none !important;
+            color: #64748b !important;
+            font-size: 20px !important;
+            cursor: pointer !important;
+            z-index: 10000 !important;
+            padding: 5px !important;
+            transition: color 0.2s !important;
+        }
+
+        #botMenuBtn:hover {
+            color: #0f172a !important;
+        }
+
+        /* Product Carousel */
+        .product-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding-bottom: 10px;
+            scroll-snap-type: x mandatory;
+            max-width: 100%;
+        }
+
+        .product-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .product-carousel::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .product-card {
+            flex: 0 0 200px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            scroll-snap-align: start;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card-body {
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .product-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 4px 0;
+            line-height: 1.3;
+        }
+
+        .product-card-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ef4444;
+            margin: 0 0 10px 0;
+        }
+
+        .product-card-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .product-card-actions button {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .product-card-actions button:hover {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .product-card-actions .btn-primary {
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        .product-card-actions .btn-primary:hover {
+            background: #ef4444;
+            border-color: #ef4444;
         }
 
         .chat .messages li i, 
@@ -287,16 +402,29 @@
             }
         }
 
-        // Hàm xóa toàn bộ tin nhắn trước bong bóng Welcome mới để dọn dẹp màn hình chat
-        function clearHistoryBeforeWelcome(welcomeBubble) {
-            const bubbles = Array.from(document.querySelectorAll('.chat .messages li'));
-            const welcomeIndex = bubbles.indexOf(welcomeBubble);
-            if (welcomeIndex > 0) {
-                for (let i = 0; i < welcomeIndex; i++) {
+        // Hàm xóa toàn bộ tin nhắn trước bong bóng mục tiêu để dọn dẹp màn hình chat
+        function clearHistoryBeforeBubble(targetBubble) {
+            const bubbles = Array.from(document.querySelectorAll('ol.chat > li'));
+            const targetIndex = bubbles.indexOf(targetBubble);
+            if (targetIndex > 0) {
+                for (let i = 0; i < targetIndex; i++) {
                     bubbles[i].remove();
                 }
             }
         }
+
+        window.shouldClearHistory = false;
+        
+        // Lắng nghe sự kiện click trên toàn bộ body để phát hiện khi người dùng bấm "Quay lại"
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('.btn, a, button');
+            if (target && target.innerText) {
+                const text = target.innerText.toLowerCase().trim();
+                if (text.includes('quay lại')) {
+                    window.shouldClearHistory = true;
+                }
+            }
+        });
 
         // Tự động ẩn các tin nhắn trigger/whisper ngầm của người dùng và các nút option cũ
         const observer = new MutationObserver((mutations) => {
@@ -309,14 +437,29 @@
                         const bubbles = node.matches('li') ? [node] : Array.from(node.querySelectorAll('li'));
                         bubbles.forEach(bubble => {
                             const txt = bubble.textContent.trim().toLowerCase();
-                            // Nếu nội dung khớp hoàn toàn với các từ khóa kích hoạt, ẩn đi lập tức
-                            if (txt === 'init' || txt === 'hi' || txt === 'hello' || txt === 'start' || txt === 'menu') {
+                            
+                            // Các từ khóa khi người dùng gõ/bấm sẽ ẩn đi và dọn sạch màn hình cũ
+                            const hiddenTriggers = ['init', 'hi', 'hello', 'start', 'menu', 'clear', '⬅️ quay lại', 'quay lại'];
+                            if (hiddenTriggers.includes(txt)) {
                                 bubble.style.display = 'none';
+                                clearHistoryBeforeBubble(bubble);
                             }
 
-                            // Tự động dọn dẹp lịch sử khi quay lại Menu chính / Chào mừng mới
-                            if (txt.includes('chào mừng bạn đến với fashion hub') || txt.includes('bạn muốn làm gì?')) {
-                                clearHistoryBeforeWelcome(bubble);
+                            // Chỉ dọn dẹp lịch sử khi về lại Menu chính / Chào mừng mới
+                            const menuTriggers = [
+                                'chào mừng bạn đến với fashion hub',
+                                'bạn muốn làm gì?',
+                                'tôi có thể giúp gì tiếp cho bạn'
+                            ];
+                            
+                            if (menuTriggers.some(trigger => txt.includes(trigger))) {
+                                clearHistoryBeforeBubble(bubble);
+                            }
+
+                            // Nếu người dùng vừa bấm "Quay lại", dọn dẹp màn hình cũ để hiện câu hỏi mới
+                            if (window.shouldClearHistory) {
+                                clearHistoryBeforeBubble(bubble);
+                                window.shouldClearHistory = false;
                             }
                         });
                     }
@@ -324,7 +467,7 @@
 
                 // Nếu có tin nhắn mới xuất hiện, ẩn toàn bộ các nút lựa chọn cũ đi lập tức
                 if (hasNewMessage) {
-                    const allBubbles = Array.from(document.querySelectorAll('.chat .messages li'));
+                    const allBubbles = Array.from(document.querySelectorAll('ol.chat > li'));
                     if (allBubbles.length > 1) {
                         for (let i = 0; i < allBubbles.length - 1; i++) {
                             const oldBtns = allBubbles[i].querySelectorAll('.btn');
@@ -342,6 +485,24 @@
 
         // Tự động kích hoạt luồng chào mừng 'init' sau khi iframe load xong và kết nối ổn định
         window.addEventListener('load', () => {
+            const rootObserver = new MutationObserver(() => {
+                const rootDiv = document.querySelector('#botmanChatRoot > div');
+                if (rootDiv && !document.getElementById('botMenuBtn')) {
+                    const menuBtn = document.createElement('button');
+                    menuBtn.id = 'botMenuBtn';
+                    menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+                    menuBtn.onclick = function(e) {
+                        e.preventDefault();
+                        if (window.parent && window.parent.botmanChatWidget) {
+                            window.shouldClearHistory = true;
+                            window.parent.botmanChatWidget.whisper('menu');
+                        }
+                    };
+                    rootDiv.appendChild(menuBtn);
+                }
+            });
+            rootObserver.observe(document.body, { childList: true, subtree: true });
+
             setTimeout(() => {
                 if (window.parent && window.parent.botmanChatWidget) {
                     window.parent.botmanChatWidget.whisper('init');

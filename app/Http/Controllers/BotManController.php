@@ -24,8 +24,13 @@ class BotManController extends Controller
         $botman->hears('^(init|hi|hello|clear|start|bắt đầu|chào|menu)$', function (BotMan $bot) use ($request) {
             $request->session()->forget(['botman_step', 'botman_state']);
             
-            $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
-                           BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+            $message = strtolower($bot->getMessage()->getText());
+            if ($message === 'menu') {
+                $welcomeMsg = BotSetting::get('bot_menu_msg_short', 'Tôi có thể giúp gì tiếp cho bạn?');
+            } else {
+                $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
+                               BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+            }
                            
             $question = Question::create($welcomeMsg)
                 ->addButtons([
@@ -69,13 +74,13 @@ class BotManController extends Controller
         });
 
         $botman->hears('checkout_now', function (BotMan $bot) {
-            $bot->reply('Tuyệt vời! Bạn có thể nhấn vào biểu tượng giỏ hàng trên website hoặc [nhấn vào đây](' . route('cart.index') . ') để thanh toán.');
+            $bot->reply('Tuyệt vời! Bạn có thể nhấn vào biểu tượng giỏ hàng trên website hoặc <a href="' . route('cart.index') . '" target="_parent" style="color: #3b82f6; text-decoration: underline; font-weight: bold;">nhấn vào đây</a> để thanh toán.');
         });
 
         $botman->hears('view_product_{id}', function (BotMan $bot, $id) {
             $product = \App\Models\Product::find($id);
             if ($product) {
-                $bot->reply('Bạn đang xem: ' . $product->name . '. Nhấn vào đây để xem chi tiết trên website: ' . url('/product/' . $product->slug));
+                $bot->reply('Bạn đang xem: <b>' . $product->name . '</b><br><a href="' . url('/product/' . $product->slug) . '" target="_parent" style="color: #3b82f6; text-decoration: underline; font-weight: bold;">Xem chi tiết trên website</a>');
             } else {
                 $bot->reply('Không tìm thấy thông tin sản phẩm này.');
             }
@@ -120,9 +125,32 @@ class BotManController extends Controller
                 return $bot->reply($question);
             }
             $bot->reply('Đây là các bài viết mới nhất từ chúng tôi:');
+            
+            $html = '<div class="product-carousel">';
             foreach ($posts as $post) {
-                $bot->reply("📖 " . $post->title . "\nLink: " . route('blog.show', $post->slug));
+                $html .= '<div class="product-card">';
+                
+                if ($post->image) {
+                    $imgUrl = asset($post->image);
+                    $html .= '<img src="'.$imgUrl.'" alt="'.$post->title.'" style="height: 150px;">';
+                } else {
+                    $html .= '<div style="height: 150px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #94a3b8;">📰</div>';
+                }
+                
+                $html .= '<div class="product-card-body">';
+                $html .= '<h3 class="product-card-title">'.$post->title.'</h3>';
+                
+                $excerpt = \Illuminate\Support\Str::limit(strip_tags($post->content), 40);
+                $html .= '<p style="font-size: 12px; color: #64748b; margin: 0 0 10px 0;">'.$excerpt.'</p>';
+                
+                $html .= '<div class="product-card-actions" style="margin-top: auto;">';
+                $html .= '<a href="'.route('blog.show', $post->slug).'" target="_parent" class="btn-primary" style="display: block;">Đọc bài viết</a>';
+                $html .= '</div></div></div>';
             }
+            $html .= '</div>';
+            
+            $bot->reply($html);
+            
             $question = Question::create(BotSetting::get('bot_back_menu_msg', 'Quay lại menu chính?'))
                 ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
             $bot->reply($question);
@@ -136,7 +164,7 @@ class BotManController extends Controller
         });
 
         $botman->hears('contact_info', function (BotMan $bot) use ($request) {
-            $bot->reply("📍 Địa chỉ: 123 Đường Sắc Đẹp, Quận 1, TP.HCM\n📞 Hotline: 1900 1234\n🌐 Website: " . url('/') . "\n📧 Email: support@cosmeticstore.com");
+            $bot->reply("📍 Địa chỉ: 123 Đường Sắc Đẹp, Quận 1, TP.HCM<br>📞 Hotline: 1900 1234<br>🌐 Website: <a href='" . url('/') . "' target='_parent' style='color: #3b82f6; font-weight: bold;'>Fashion Hub</a><br>📧 Email: support@cosmeticstore.com");
             $question = Question::create(BotSetting::get('bot_back_menu_msg', 'Quay lại menu chính?'))
                 ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
             $bot->reply($question);
@@ -179,11 +207,15 @@ class BotManController extends Controller
             $value = $payload['value'] ?? $message;
 
             // Global / Reset Commands (Always trigger start/reset even if in a step)
-            $resetCommands = ['hi', 'hello', 'start', 'bắt đầu', 'start_order', 'start_fast', 'chào', 'clear'];
+            $resetCommands = ['hi', 'hello', 'start', 'bắt đầu', 'start_order', 'start_fast', 'chào', 'clear', 'menu'];
             if (in_array(strtolower($message), $resetCommands) || in_array($value, $resetCommands)) {
                 $request->session()->forget(['botman_step', 'botman_state']);
-                $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
-                               BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+                if (strtolower($message) === 'menu' || $value === 'menu') {
+                    $welcomeMsg = BotSetting::get('bot_menu_msg_short', 'Tôi có thể giúp gì tiếp cho bạn?');
+                } else {
+                    $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
+                                   BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+                }
                                
                 $question = Question::create($welcomeMsg)
                     ->addButtons([
@@ -246,8 +278,7 @@ class BotManController extends Controller
 
                 if ($step === 'menu') {
                     $request->session()->forget(['botman_step', 'botman_state']);
-                    $welcomeMsg = BotSetting::get('bot_welcome_msg', 'Chào mừng bạn đến với Fashion Hub! 👕') . "\n\n" . 
-                                   BotSetting::get('bot_menu_msg', 'Tôi là trợ lý ảo hỗ trợ bạn tìm kiếm và đặt hàng. Bạn muốn làm gì?');
+                    $welcomeMsg = BotSetting::get('bot_menu_msg_short', 'Tôi có thể giúp gì tiếp cho bạn?');
                                    
                     $question = Question::create($welcomeMsg)
                         ->addButtons([
@@ -366,7 +397,7 @@ class BotManController extends Controller
                     ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
                 $bot->reply($question);
             } elseif ($step === 'showConsultation') {
-                $bot->reply(BotSetting::get('bot_analyzing', 'Đang phân tích thông số của bạn qua hệ thống... ⏳'));
+                $bot->typesAndWaits(2);
                 
                 $query = Product::where('is_active', true);
                 if ($state['gender'] !== 'Unisex') {
@@ -386,27 +417,39 @@ class BotManController extends Controller
                                  ->take(5)->get();
 
                 if ($products->isEmpty()) {
-                    $bot->reply(BotSetting::get('bot_no_fit_found', 'Rất tiếc, tôi chưa tìm thấy sản phẩm nào có size chuẩn xác tuyệt đối cho bạn. Tuy nhiên, shop còn nhiều mẫu Oversize, bạn có thể tham khảo nhé!'));
-                    $request->session()->forget(['botman_step', 'botman_state']);
+                    $question = Question::create(BotSetting::get('bot_no_fit_found', 'Rất tiếc, tôi chưa tìm thấy sản phẩm nào có size chuẩn xác tuyệt đối cho bạn. Tuy nhiên, shop còn nhiều mẫu Oversize, bạn có thể tham khảo nhé!'))
+                        ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                    $bot->reply($question);
+                    $request->session()->put('botman_step', 'menu');
                     return;
                 }
 
                 $bot->reply(BotSetting::get('bot_fit_results_intro', 'Dựa trên các chỉ số của bạn, đây là những mẫu áo cực kỳ vừa vặn dành cho bạn:'));
                 
+                $html = '<div class="product-carousel">';
                 foreach ($products as $product) {
-                    if ($product->image) {
-                        $attachment = new Image(asset($product->image));
-                        $bot->reply(OutgoingMessage::create('')->withAttachment($attachment));
-                    }
                     $priceFormat = number_format($product->price) . 'đ';
-                    $question = Question::create("✨ *Dành cho bạn: {$product->name}*\n💰 Giá: *{$priceFormat}*")
-                        ->addButtons([
-                            Button::create('🛒 Thêm vào giỏ')->value('add_to_cart_' . $product->id),
-                            Button::create('📦 Đặt ngay')->value('buy_now_' . $product->id),
-                            Button::create('👁️ Chi tiết')->value('view_product_' . $product->id),
-                        ]);
-                    $bot->reply($question);
+                    $html .= '<div class="product-card">';
+                    
+                    if ($product->image) {
+                        $imgUrl = asset($product->image);
+                        $html .= '<img src="'.$imgUrl.'" alt="'.$product->name.'">';
+                    } else {
+                        $html .= '<div style="height: 200px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #94a3b8;">📦</div>';
+                    }
+                    
+                    $html .= '<div class="product-card-body">';
+                    $html .= '<h3 class="product-card-title">'.$product->name.'</h3>';
+                    $html .= '<p class="product-card-price">'.$priceFormat.'</p>';
+                    $html .= '<div class="product-card-actions">';
+                    $html .= '<button class="btn-primary" onclick="window.parent.botmanChatWidget.whisper(\'buy_now_'.$product->id.'\'); return false;">Mua ngay</button>';
+                    $html .= '<button onclick="window.parent.botmanChatWidget.whisper(\'add_to_cart_'.$product->id.'\'); return false;">Thêm vào giỏ</button>';
+                    $html .= '<button onclick="window.parent.botmanChatWidget.whisper(\'view_product_'.$product->id.'\'); return false;">Chi tiết</button>';
+                    $html .= '</div></div></div>';
                 }
+                $html .= '</div>';
+                $bot->reply($html);
+                
                 $request->session()->forget(['botman_step', 'botman_state']);
                 return;
 
@@ -446,30 +489,38 @@ class BotManController extends Controller
                 $products = $query->take(5)->get();
                 if ($products->isEmpty()) {
                     $bot->reply('Rất tiếc, tôi không tìm thấy sản phẩm phù hợp. 😢');
-                    $bot->reply('Bạn đang tìm kiếm sản phẩm gì? (Hãy gõ tên sản phẩm hoặc gõ "tất cả")');
+                    $question = Question::create('Bạn đang tìm kiếm sản phẩm gì? (Hãy gõ tên sản phẩm hoặc gõ "tất cả")')
+                        ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                    $bot->reply($question);
                     $request->session()->put('botman_step', 'askSearch');
                     return;
                 }
                 
                 $bot->reply('Của bạn đây! Hãy chọn sản phẩm ưng ý nhất nhé:');
                 
+                $html = '<div class="product-carousel">';
                 foreach ($products as $product) {
-                    // 1. Send Image separately (widget constraint)
-                    if ($product->image) {
-                        $attachment = new Image(asset($product->image));
-                        $bot->reply(OutgoingMessage::create('')->withAttachment($attachment));
-                    }
-
-                    // 2. Combine Name, Price, and Actions in ONE bubble
                     $priceFormat = number_format($product->price) . 'đ';
-                    $question = Question::create("💎 *{$product->name}*\n💰 Giá: *{$priceFormat}*")
-                        ->addButtons([
-                            Button::create('🛒 Thêm vào giỏ')->value('add_to_cart_' . $product->id),
-                            Button::create('📦 Đặt ngay')->value('buy_now_' . $product->id),
-                            Button::create('👁️ Chi tiết')->value('view_product_' . $product->id),
-                        ]);
-                    $bot->reply($question);
+                    $html .= '<div class="product-card">';
+                    
+                    if ($product->image) {
+                        $imgUrl = asset($product->image);
+                        $html .= '<img src="'.$imgUrl.'" alt="'.$product->name.'">';
+                    } else {
+                        $html .= '<div style="height: 200px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #94a3b8;">📦</div>';
+                    }
+                    
+                    $html .= '<div class="product-card-body">';
+                    $html .= '<h3 class="product-card-title">'.$product->name.'</h3>';
+                    $html .= '<p class="product-card-price">'.$priceFormat.'</p>';
+                    $html .= '<div class="product-card-actions">';
+                    $html .= '<button class="btn-primary" onclick="window.parent.botmanChatWidget.whisper(\'buy_now_'.$product->id.'\'); return false;">Mua ngay</button>';
+                    $html .= '<button onclick="window.parent.botmanChatWidget.whisper(\'add_to_cart_'.$product->id.'\'); return false;">Thêm vào giỏ</button>';
+                    $html .= '<button onclick="window.parent.botmanChatWidget.whisper(\'view_product_'.$product->id.'\'); return false;">Chi tiết</button>';
+                    $html .= '</div></div></div>';
                 }
+                $html .= '</div>';
+                $bot->reply($html);
 
                 // 3. Simple Footer with only ONE back button
                 $question = Question::create('Bạn chưa ưng ý?')->addButtons([
