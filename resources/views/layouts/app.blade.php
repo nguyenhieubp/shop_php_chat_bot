@@ -86,40 +86,7 @@
             display: none !important;
         }
 
-        /* Resizable Chatbot Handle styles */
-        .botman-resize-handle {
-            position: absolute !important;
-            top: -12px !important;
-            left: -12px !important;
-            width: 28px !important;
-            height: 28px !important;
-            border-radius: 50% !important;
-            background: #000000 !important;
-            color: #ffffff !important;
-            border: 2px solid #ffffff !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            cursor: nwse-resize !important;
-            z-index: 100000000 !important;
-            font-size: 11px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
-            transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) !important;
-        }
 
-        .botman-resize-handle:hover {
-            transform: scale(1.15) !important;
-            background: #ff0000 !important;
-            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4) !important;
-        }
-
-        body.botman-resizing iframe#chatBotManFrame {
-            pointer-events: none !important;
-        }
-
-        #botmanWidgetRoot.botman-fullscreen .botman-resize-handle {
-            display: none !important;
-        }
 
         * {
             margin: 0;
@@ -490,8 +457,8 @@
             introMessage: '',
             headerTextColor: '#000000',
             bubbleAvatarUrl: 'https://cdn-icons-png.flaticon.com/512/10046/10046426.png',
-            desktopWidth: 450,
-            desktopHeight: 550,
+            desktopWidth: 500,
+            desktopHeight: 650,
             displayMessageTime: false,
             sendWidgetOpenedEvent: true,
             widgetOpenedEventData: 'init',
@@ -519,79 +486,7 @@
             // Sẽ được tự động kích hoạt bởi load event của iframe chat.blade.php
         });
 
-        // Initialize Resizable Chatbot drag listener
-        function initResizableChatbot() {
-            var checkInterval = setInterval(function() {
-                var iframe = document.getElementById('chatBotManFrame');
-                if (iframe) {
-                    // Traverse up to find the outermost child container under #botmanWidgetRoot
-                    var wrapper = iframe;
-                    while (wrapper.parentElement && wrapper.parentElement.id !== 'botmanWidgetRoot') {
-                        wrapper = wrapper.parentElement;
-                    }
-                    
-                    if (wrapper && wrapper !== iframe && !wrapper.querySelector('.botman-resize-handle')) {
-                        clearInterval(checkInterval);
-                        
-                        // Ensure outermost wrapper doesn't clip the handle
-                        wrapper.style.setProperty('overflow', 'visible', 'important');
-                        
-                        // Force iframe itself to scale to 100% of wrapper
-                        iframe.style.setProperty('width', '100%', 'important');
-                        iframe.style.setProperty('height', '100%', 'important');
-                        
-                        var handle = document.createElement('div');
-                        handle.className = 'botman-resize-handle';
-                        handle.innerHTML = '<i class="fa-solid fa-arrows-up-down-left-right"></i>';
-                        
-                        wrapper.appendChild(handle);
-                        
-                        var startX, startY, startWidth, startHeight;
-                        
-                        handle.addEventListener('mousedown', initDrag, false);
-                        
-                        function initDrag(e) {
-                            e.preventDefault();
-                            startX = e.clientX;
-                            startY = e.clientY;
-                            
-                            startWidth = parseInt(document.defaultView.getComputedStyle(wrapper).width, 10);
-                            startHeight = parseInt(document.defaultView.getComputedStyle(wrapper).height, 10);
-                            
-                            document.documentElement.addEventListener('mousemove', doDrag, false);
-                            document.documentElement.addEventListener('mouseup', stopDrag, false);
-                            
-                            document.body.classList.add('botman-resizing');
-                        }
-                        
-                        function doDrag(e) {
-                            var deltaX = startX - e.clientX;
-                            var deltaY = startY - e.clientY;
-                            
-                            var newWidth = startWidth + deltaX;
-                            var newHeight = startHeight + deltaY;
-                            
-                            // Width constraints: 350px to almost full screen width minus margin
-                            if (newWidth > 350 && newWidth < window.innerWidth - 80) {
-                                wrapper.style.setProperty('width', newWidth + 'px', 'important');
-                            }
-                            // Height constraints: 400px to almost full screen height minus margin
-                            if (newHeight > 400 && newHeight < window.innerHeight - 80) {
-                                wrapper.style.setProperty('height', newHeight + 'px', 'important');
-                            }
-                        }
-                        
-                        function stopDrag(e) {
-                            document.documentElement.removeEventListener('mousemove', doDrag, false);
-                            document.documentElement.removeEventListener('mouseup', stopDrag, false);
-                            document.body.classList.remove('botman-resizing');
-                        }
-                    }
-                }
-            }, 300);
-        }
 
-        initResizableChatbot();
 
 
         // AJAX Sync: Cập nhật Badge giỏ hàng khi Bot thêm hàng

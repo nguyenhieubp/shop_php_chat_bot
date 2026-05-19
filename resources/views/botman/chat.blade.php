@@ -8,24 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #ffffff;
-            position: relative;
-        }
-
-        .chat {
-            display: flex !important;
-            flex-direction: column !important;
             height: 100% !important;
-            width: 100% !important;
+            max-height: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
-            box-sizing: border-box !important;
             overflow: hidden !important;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            position: relative !important;
+            box-sizing: border-box !important;
+        }
+
+        #botmanChatRoot > div {
+            height: 100% !important;
+            max-height: 100% !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            bottom: 0 !important;
+            right: 0 !important;
         }
 
         /* Message Entry Animation */
@@ -43,9 +51,10 @@
         #messageArea {
             background-color: #ffffff !important;
             padding: 20px 15px !important;
-            flex: 1 !important;
+            flex: 1 1 auto !important;
+            height: auto !important;
             overflow-y: auto !important;
-            padding-bottom: 20px !important;
+            padding-bottom: 30px !important;
             box-sizing: border-box !important;
         }
 
@@ -57,94 +66,110 @@
 
         .chat .messages li {
             animation: slideInUp 0.4s cubic-bezier(0.19, 1, 0.22, 1) both;
-            margin-bottom: 25px !important;
+            margin-bottom: 12px !important;
             list-style: none !important;
             position: relative;
             clear: both;
             display: block;
         }
 
-        /* Bot Message Bubbles */
-        .chat .messages li.visitor {
-            background: #ffffff !important;
-            color: #000000 !important;
-            border: 1px solid #000000 !important;
-            border-radius: 0px !important;
-            padding: 15px 18px !important;
+        /* Bot Message Bubbles (Left Side) */
+        .chat .messages li:not(.visitor) {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: none !important;
+            border-radius: 18px !important;
+            border-top-left-radius: 4px !important;
+            padding: 12px 16px !important;
             font-size: 14px !important;
-            line-height: 1.6 !important;
+            line-height: 1.5 !important;
             max-width: 85% !important;
             float: left !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
         }
 
-        .chat .messages li.visitor::before {
-            content: 'FASHION HUB';
-            position: absolute;
-            top: -18px;
-            left: 0;
-            font-size: 9px;
-            font-weight: 900;
-            color: #ff0000;
-            letter-spacing: 0.1em;
+        .chat .messages li:not(.visitor)::before {
+            display: none !important;
         }
 
-        /* User Message Bubbles */
-        .chat .messages li.not-visitor {
+        /* User Message Bubbles (Right Side) */
+        .chat .messages li.visitor {
             background: #000000 !important;
             color: #ffffff !important;
-            border-radius: 0px !important;
-            padding: 12px 18px !important;
+            border: none !important;
+            border-radius: 18px !important;
+            border-top-right-radius: 4px !important;
+            padding: 12px 16px !important;
             font-size: 14px !important;
             font-weight: 500 !important;
             max-width: 80% !important;
             float: right !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
         }
 
-        /* Buttons & Actions */
+        .chat .messages li.visitor::before {
+            display: none !important;
+        }
+
+        /* Buttons & Actions (Options formatted as modern chat pills) */
         .btn {
-            background: #000000 !important;
-            color: #ffffff !important;
-            border: none !important;
-            border-radius: 0px !important;
-            padding: 14px 20px !important;
-            font-weight: 800 !important;
-            text-transform: uppercase !important;
-            font-size: 11px !important;
-            letter-spacing: 0.15em !important;
-            transition: all 0.3s ease !important;
-            margin-bottom: 8px !important;
-            display: block !important;
-            width: 100% !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 20px !important;
+            padding: 9px 16px !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            font-size: 13px !important;
+            letter-spacing: normal !important;
+            transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1) !important;
+            margin-top: 8px !important;
+            margin-bottom: 2px !important;
+            display: inline-block !important;
+            width: auto !important;
+            min-width: 110px !important;
+            max-width: 100% !important;
             text-align: center !important;
             cursor: pointer;
             box-sizing: border-box;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            margin-right: 6px !important;
         }
 
         .btn:hover {
             background: #ff0000 !important;
             color: #ffffff !important;
+            border-color: #ff0000 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.2) !important;
         }
 
-        /* Input Area */
-        .chat .input {
-            border-top: 1px solid #000000 !important;
-            padding: 15px !important;
-            background: #ffffff !important;
-            width: 100% !important;
-            box-sizing: border-box !important;
-            z-index: 9999 !important;
-            position: relative !important;
-        }
-
+        /* Input Area (Locked to footer) */
         #userText {
-            border-radius: 0px !important;
-            border: 1px solid #eeeeee !important;
-            padding: 12px 15px !important;
+            border-radius: 30px !important;
+            border: 1px solid #e2e8f0 !important;
+            padding: 12px 18px !important;
+            margin: 0 15px 15px 15px !important;
             font-family: inherit !important;
             font-size: 14px !important;
             outline: none !important;
-            width: 100%;
-            box-sizing: border-box;
+            width: calc(100% - 30px) !important;
+            box-sizing: border-box !important;
+            background: #f8fafc !important;
+            transition: all 0.2s ease !important;
+            position: relative !important;
+            flex: 0 0 auto !important;
+            z-index: 9999 !important;
+        }
+
+        #userText:focus {
+            border-color: #ff0000 !important;
+            background: #ffffff !important;
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1) !important;
+        }
+
+        a.banner {
+            display: none !important;
         }
 
         .chat .messages li i, 
@@ -262,11 +287,24 @@
             }
         }
 
-        // Tự động ẩn các tin nhắn trigger/whisper ngầm của người dùng (như 'init', 'hi', 'start', 'menu')
+        // Hàm xóa toàn bộ tin nhắn trước bong bóng Welcome mới để dọn dẹp màn hình chat
+        function clearHistoryBeforeWelcome(welcomeBubble) {
+            const bubbles = Array.from(document.querySelectorAll('.chat .messages li'));
+            const welcomeIndex = bubbles.indexOf(welcomeBubble);
+            if (welcomeIndex > 0) {
+                for (let i = 0; i < welcomeIndex; i++) {
+                    bubbles[i].remove();
+                }
+            }
+        }
+
+        // Tự động ẩn các tin nhắn trigger/whisper ngầm của người dùng và các nút option cũ
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
+                let hasNewMessage = false;
                 mutation.addedNodes.forEach((node) => {
                     if (node.nodeType === 1) {
+                        hasNewMessage = true;
                         // Tìm tất cả các thẻ li được thêm vào
                         const bubbles = node.matches('li') ? [node] : Array.from(node.querySelectorAll('li'));
                         bubbles.forEach(bubble => {
@@ -275,9 +313,27 @@
                             if (txt === 'init' || txt === 'hi' || txt === 'hello' || txt === 'start' || txt === 'menu') {
                                 bubble.style.display = 'none';
                             }
+
+                            // Tự động dọn dẹp lịch sử khi quay lại Menu chính / Chào mừng mới
+                            if (txt.includes('chào mừng bạn đến với fashion hub') || txt.includes('bạn muốn làm gì?')) {
+                                clearHistoryBeforeWelcome(bubble);
+                            }
                         });
                     }
                 });
+
+                // Nếu có tin nhắn mới xuất hiện, ẩn toàn bộ các nút lựa chọn cũ đi lập tức
+                if (hasNewMessage) {
+                    const allBubbles = Array.from(document.querySelectorAll('.chat .messages li'));
+                    if (allBubbles.length > 1) {
+                        for (let i = 0; i < allBubbles.length - 1; i++) {
+                            const oldBtns = allBubbles[i].querySelectorAll('.btn');
+                            oldBtns.forEach(btn => {
+                                btn.style.display = 'none';
+                            });
+                        }
+                    }
+                }
             });
         });
 

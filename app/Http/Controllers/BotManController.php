@@ -477,10 +477,6 @@ class BotManController extends Controller
                 ]);
                 $bot->reply($question);
 
-                $question = Question::create(BotSetting::get('bot_ask_name', 'Vui lòng cho biết tên của bạn:'))
-                    ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
-                $bot->reply($question);
-
             } elseif ($step === 'askPhone') {
                 $question = Question::create('Cảm ơn ' . $state['customerName'] . '. ' . BotSetting::get('bot_ask_phone', 'Vui lòng cho biết SĐT của bạn:'))
                     ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
