@@ -371,12 +371,16 @@ class BotManController extends Controller
                     $step = 'confirmOrder';
                 } elseif ($step === 'confirmOrder') {
                     if ($value === 'yes' || strtolower($message) === 'xác nhận') {
+                        $product = Product::find($state['selectedProductId']);
                         $order = Order::create([
                             'product_id' => $state['selectedProductId'],
                             'customer_name' => $state['customerName'],
                             'phone' => $state['customerPhone'],
                             'address' => $state['customerAddress'] ?? '',
-                            'status' => 'new'
+                            'status' => 'new',
+                            'payment_method' => 'cod',
+                            'payment_status' => 'pending',
+                            'total_amount' => $product ? $product->price : 0
                         ]);
                         $bot->reply(BotSetting::get('bot_order_success', '🎉 Cảm ơn bạn! Đơn hàng đã được ghi nhận mang mã số: #') . $order->id);
                         $request->session()->forget(['botman_step', 'botman_state']);
