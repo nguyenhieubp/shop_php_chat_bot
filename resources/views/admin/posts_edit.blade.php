@@ -80,6 +80,38 @@
         background: white;
         outline: none;
     }
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 15px;
+    }
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: var(--transition);
+        text-align: left;
+    }
+    .checkbox-item:hover {
+        border-color: var(--primary);
+    }
+    .checkbox-item input {
+        width: 20px;
+        height: 20px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+    .checkbox-item span {
+        font-weight: 700;
+        font-size: 13px;
+        color: #475569;
+    }
 </style>
 @endsection
 
@@ -128,6 +160,16 @@
                     <img src="{{ $post->image ? asset($post->image) : '' }}" id="postImagePreview" style="{{ $post->image ? 'display: block;' : 'display: none;' }}">
                 </div>
                 <input type="file" name="image" id="postImageInput" class="form-input" accept="image/*">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 30px;">
+                <label class="form-label"><i class="fa-solid fa-sliders"></i> Thiết lập hiển thị</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <span>Công khai bài viết</span>
+                        <input type="checkbox" name="is_published" value="1" {{ $post->is_published ? 'checked' : '' }}>
+                    </label>
+                </div>
             </div>
 
             <div style="margin-top: 30px; background: #fffbeb; border: 1px solid #fef3c7; padding: 20px; border-radius: 15px; text-align: left;">

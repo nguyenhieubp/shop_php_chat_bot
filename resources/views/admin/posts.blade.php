@@ -74,6 +74,10 @@
         background: #ecfdf5;
         color: #059669;
     }
+    .status-draft {
+        background: #f1f5f9;
+        color: #64748b;
+    }
     .status-dot {
         width: 6px;
         height: 6px;
@@ -183,17 +187,24 @@
                     </div>
                 </td>
                 <td>
-                    <span class="status-badge status-published">
-                        <span class="status-dot"></span>
-                        Đã xuất bản
-                    </span>
+                    @if($post->is_published)
+                        <span class="status-badge status-published">
+                            <span class="status-dot"></span>
+                            Đã xuất bản
+                        </span>
+                    @else
+                        <span class="status-badge status-draft">
+                            <span class="status-dot"></span>
+                            Bản nháp
+                        </span>
+                    @endif
                 </td>
                 <td style="text-align: right; padding-right: 35px;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end;">
                         <a href="{{ route('admin.post.edit', $post->id) }}" class="action-btn" title="Chỉnh sửa">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a href="{{ route('blog.show', $post->id) }}" target="_blank" class="action-btn" title="Xem trên web">
+                        <a href="{{ route('blog.show', $post->slug) }}" target="_blank" class="action-btn" title="Xem trên web">
                             <i class="fa-solid fa-arrow-up-right-from-square"></i>
                         </a>
                         <form action="{{ route('admin.post.delete', $post->id) }}" method="POST" onsubmit="event.preventDefault(); window.confirmDelete(this);" style="display: inline;">

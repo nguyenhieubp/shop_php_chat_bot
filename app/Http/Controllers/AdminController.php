@@ -344,7 +344,7 @@ class AdminController extends Controller
             'slug' => \Illuminate\Support\Str::slug($request->title) . '-' . time(),
             'content' => $request->content,
             'image' => $imagePath,
-            'is_published' => true,
+            'is_published' => $request->has('is_published'),
         ]);
 
         return redirect()->route('admin.posts')->with('success', 'Bài viết đã được đăng!');
