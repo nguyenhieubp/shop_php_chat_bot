@@ -333,29 +333,7 @@
     </div>
 </div>
 
-<div class="dashboard-grid">
-    <div class="stat-card">
-        <div class="stat-icon"><i class="fa-solid fa-spa"></i></div>
-        <div>
-            <div class="stat-value">{{ $productCount }}</div>
-            <div class="stat-label">Sản phẩm</div>
-        </div>
-    </div>
-    <div class="stat-card" style="border-bottom: 3px solid #f59e0b;">
-        <div class="stat-icon" style="color: #f59e0b;"><i class="fa-solid fa-cart-shopping"></i></div>
-        <div>
-            <div class="stat-value">{{ $orderCount }}</div>
-            <div class="stat-label">Đơn hàng mới</div>
-        </div>
-    </div>
-    <div class="stat-card" style="border-bottom: 3px solid #10b981;">
-        <div class="stat-icon" style="color: #10b981;"><i class="fa-solid fa-users"></i></div>
-        <div>
-            <div class="stat-value">{{ number_format($customerCount) }}</div>
-            <div class="stat-label">Khách hàng</div>
-        </div>
-    </div>
-</div>
+
 
 <div class="card stats-container">
     <div class="stats-header">
