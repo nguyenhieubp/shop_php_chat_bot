@@ -175,7 +175,7 @@ class ProductController extends Controller
             $products->orderBy('created_at', 'desc');
         }
 
-        $results = $products->take(10)->get();
+        $results = $products->paginate(10);
 
         return response()->json($results);
     }
