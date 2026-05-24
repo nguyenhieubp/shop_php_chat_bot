@@ -135,7 +135,7 @@ class ProductController extends Controller
         $gender = $request->input('gender');
         $sort = $request->input('sort');
 
-        $products = Product::with('category');
+        $products = Product::where('is_active', true)->with('category');
 
         if ($query) {
             $products->where('name', 'LIKE', "%{$query}%");
