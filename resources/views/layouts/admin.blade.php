@@ -278,6 +278,16 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="{{ route('admin.customers') }}" class="nav-link {{ request()->routeIs('admin.customers') ? 'active' : '' }}">
+                    <i class="fa-solid fa-users"></i> Khách hàng
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('admin.revenue.report') }}" class="nav-link {{ request()->routeIs('admin.revenue.report') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Báo cáo doanh thu
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('admin.posts') }}" class="nav-link {{ request()->routeIs('admin.posts') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-pen"></i> Bài viết
                 </a>
@@ -322,15 +332,6 @@
         @if(session('error'))
             <div class="alert alert-error">{{ session('error') }}</div>
         @endif
-        @if($errors->any())
-            <div class="alert alert-error">
-                <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
 
         @yield('content')
     </main>
@@ -359,7 +360,7 @@
         function submitDelete() { if (formToSubmit) formToSubmit.submit(); }
         modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-        function runFilter(e) {
+        document.addEventListener('input', function(e) {
             if (e.target.classList.contains('column-search')) {
                 const table = e.target.closest('table');
                 const rows = table.querySelectorAll('tbody tr');
@@ -377,8 +378,7 @@
                             // Current cell format is DD/MM/YYYY. Need YYYY-MM-DD for comparison.
                             const parts = cellValue.split('/');
                             if (parts.length === 3) {
-                                const year = parts[2].trim().substring(0, 4);
-                                cellValue = `${year}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                                cellValue = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
                             }
                             if (cellValue !== filterValue) isVisible = false;
                         } 
@@ -389,9 +389,7 @@
                     row.style.display = isVisible ? '' : 'none';
                 });
             }
-        }
-        document.addEventListener('input', runFilter);
-        document.addEventListener('change', runFilter);
+        });
     </script>
     @yield('scripts')
 </body>

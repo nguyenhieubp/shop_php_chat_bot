@@ -80,11 +80,12 @@ class ProductController extends Controller
         $vnp_HashSecret = config('vnpay.vnp_HashSecret');
 
         $vnp_TxnRef = implode('_', $orderIds) . '_' . time();
-        $vnp_OrderInfo = "Thanh toan don hang: " . $vnp_TxnRef;
+        $vnp_OrderInfo = "Thanh toan don hang " . implode(',', $orderIds);
         $vnp_OrderType = "billpayment";
-        $vnp_Amount = $totalAmount * 100;
+        $vnp_Amount = (int)$totalAmount * 100;
         $vnp_Locale = 'vn';
         $vnp_IpAddr = request()->ip();
+        if ($vnp_IpAddr == '::1') $vnp_IpAddr = '127.0.0.1';
 
         $inputData = array(
             "vnp_Version" => "2.1.0",
@@ -108,12 +109,11 @@ class ProductController extends Controller
         foreach ($inputData as $key => $value) {
             if ($i == 1) {
                 $query .= '&' . urlencode($key) . "=" . urlencode($value);
-                $hashdata .= '&' . urlencode($key) . "=" . urlencode($value);
             } else {
                 $query .= urlencode($key) . "=" . urlencode($value);
-                $hashdata .= urlencode($key) . "=" . urlencode($value);
                 $i = 1;
             }
+            $hashdata .= urlencode($key) . "=" . urlencode($value);
         }
 
         $vnp_Url = $vnp_Url . "?" . $query;
@@ -175,7 +175,7 @@ class ProductController extends Controller
             $products->orderBy('created_at', 'desc');
         }
 
-        $results = $products->paginate(10);
+        $results = $products->take(10)->get();
 
         return response()->json($results);
     }

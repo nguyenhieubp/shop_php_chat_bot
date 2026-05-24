@@ -71,6 +71,16 @@ Route::prefix('admin')->group(function () {
     Route::get('/reports', [AdminController::class, 'reports'])->name('admin.reports');
     Route::post('/reports/{id}/delete', [AdminController::class, 'deleteFeedback'])->name('admin.reports.delete');
 
+    // Order Statistics API
+    Route::get('/api/order-stats', [AdminController::class, 'orderStats'])->name('admin.api.order-stats');
+
+    // Revenue Reports & Excel Export
+    Route::get('/revenue-report', [AdminController::class, 'revenueReport'])->name('admin.revenue.report');
+    Route::get('/revenue-report/export', [AdminController::class, 'exportRevenue'])->name('admin.revenue.export');
+
+    // Customer Directory
+    Route::get('/customers', [AdminController::class, 'customers'])->name('admin.customers');
+
     // Sliders
     Route::get('/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
     Route::get('/sliders/new', [AdminController::class, 'createSliderForm'])->name('admin.slider.new');
