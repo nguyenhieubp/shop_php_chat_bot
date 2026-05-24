@@ -251,7 +251,7 @@
             <h2 class="checkout-section-title"><span>01</span> Thông tin nhận hàng</h2>
             
             <div class="form-card">
-                <form action="{{ route('order.store') }}" method="POST" id="checkout-form">
+                <form action="{{ route('order.store') }}" method="POST" id="checkout-form" novalidate>
                     @csrf
                     
                     <div class="form-group">
@@ -315,7 +315,11 @@
                 <div style="max-height: 350px; overflow-y: auto; padding-right: 5px;">
                     @foreach($cart as $item)
                         <div class="order-item">
-                            <img src="{{ asset($item['image'] ?? 'placeholder.png') }}" class="order-item-img" alt="{{ $item['name'] }}">
+                            @if(!empty($item['image']))
+                                <img src="/{{ ltrim($item['image'], '/') }}" class="order-item-img" alt="{{ $item['name'] }}">
+                            @else
+                                <div class="order-item-img" style="background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-size: 20px;">✨</div>
+                            @endif
                             <div class="order-item-info">
                                 <div class="order-item-name">{{ $item['name'] }}</div>
                                 <div class="order-item-meta">Số lượng: {{ $item['quantity'] }}</div>
@@ -354,6 +358,104 @@
         </div>
     </div>
 </div>
+
+<!-- Order Confirmation Modal -->
+<div id="order-confirm-modal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #ffffff; border: 2px solid #000000; width: 100%; max-width: 800px; padding: 35px; position: relative; animation: modalFadeIn 0.3s ease-out; box-shadow: 10px 10px 0px rgba(0,0,0,0.15); display: flex; flex-direction: column;">
+        <h3 style="font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 25px; border-bottom: 2px solid #000000; padding-bottom: 12px; display: flex; align-items: center; gap: 10px; color: #1f2937;">
+            <i class="fa-solid fa-file-invoice" style="color: #ff0000;"></i> Xác nhận thông tin đơn hàng
+        </h3>
+        
+        <p style="font-size: 14px; color: #4b5563; margin-bottom: 25px; line-height: 1.6;">Vui lòng kiểm tra kỹ các thông tin giao hàng dưới đây để tránh sai sót khi vận chuyển:</p>
+        
+        <div class="modal-body-layout">
+            <!-- Left Column: Ordered Products -->
+            <div>
+                <div style="font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-box" style="color: #ff0000;"></i> Sản phẩm đặt mua
+                </div>
+                <div style="max-height: 200px; overflow-y: auto; border: 1px solid #e5e7eb; padding: 12px; display: flex; flex-direction: column; gap: 12px; background: #fafafa;">
+                    @foreach($cart as $item)
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            @if(!empty($item['image']))
+                                <img src="/{{ ltrim($item['image'], '/') }}" style="width: 45px; height: 45px; object-fit: cover; border: 1px solid #e5e7eb; border-radius: 4px;" alt="{{ $item['name'] }}">
+                            @else
+                                <div style="width: 45px; height: 45px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 4px;">✨</div>
+                            @endif
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-size: 13px; font-weight: 700; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $item['name'] }}</div>
+                                <div style="font-size: 12px; color: #6b7280;">Số lượng: {{ $item['quantity'] }}</div>
+                            </div>
+                            <div style="font-size: 13px; font-weight: 700; color: #1f2937;">{{ number_format($item['price'] * $item['quantity']) }}đ</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            
+            <!-- Right Column: Delivery Details -->
+            <div>
+                <div style="font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-truck" style="color: #ff0000;"></i> Thông tin nhận hàng
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 14px; background: #fbfbfb; border: 1px solid #e5e7eb; padding: 15px;">
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 14px;">
+                        <span style="font-weight: 700; color: #4b5563;">Họ và tên:</span>
+                        <span id="confirm-name" style="color: #1f2937; word-break: break-word;"></span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 14px;">
+                        <span style="font-weight: 700; color: #4b5563;">Số điện thoại:</span>
+                        <span id="confirm-phone" style="color: #ff0000; font-weight: 700;"></span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 14px;">
+                        <span style="font-weight: 700; color: #4b5563;">Địa chỉ:</span>
+                        <span id="confirm-address" style="color: #1f2937; word-break: break-word;"></span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 14px;">
+                        <span style="font-weight: 700; color: #4b5563;">Thanh toán:</span>
+                        <span id="confirm-payment" style="color: #1f2937; font-weight: 600;"></span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; font-size: 14px; border-top: 1px dashed #cbd5e1; padding-top: 12px; margin-top: 5px;">
+                        <span style="font-weight: 800; color: #1f2937; font-size: 15px;">Tổng cộng:</span>
+                        <span id="confirm-total" style="color: #ff0000; font-weight: 800; font-size: 17px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px;">
+            <button id="modal-cancel-btn" type="button" style="padding: 14px; border: 1px solid #d1d5db; background: #ffffff; color: #374151; font-weight: 700; cursor: pointer; transition: 0.2s;">
+                Quay lại chỉnh sửa
+            </button>
+            <button id="modal-submit-btn" type="button" style="padding: 14px; border: none; background: #000000; color: #ffffff; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s;">
+                Xác nhận & Đặt hàng
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-body-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    @media (min-width: 768px) {
+        .modal-body-layout {
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+        }
+    }
+    @keyframes modalFadeIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+    #modal-cancel-btn:hover {
+        background: #f3f4f6;
+    }
+    #modal-submit-btn:hover {
+        background: #ff0000;
+    }
+</style>
 @endsection
 
 @section('scripts')
@@ -364,6 +466,85 @@
             this.classList.add('active');
             this.querySelector('input').checked = true;
         });
+    });
+
+    const form = document.getElementById('checkout-form');
+    const modal = document.getElementById('order-confirm-modal');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Clear previous errors
+        document.querySelectorAll('.error-feedback').forEach(el => el.remove());
+        document.querySelectorAll('.form-input, .form-textarea').forEach(el => el.style.borderColor = '');
+        
+        let isValid = true;
+        
+        // Validate name
+        const nameInput = document.getElementById('customer_name');
+        if (!nameInput.value.trim()) {
+            showError(nameInput, 'Vui lòng nhập họ và tên.');
+            isValid = false;
+        }
+        
+        // Validate phone
+        const phoneInput = document.getElementById('phone');
+        const phoneVal = phoneInput.value.trim();
+        const phoneRegex = /^0[0-9]{9}$/;
+        if (!phoneVal) {
+            showError(phoneInput, 'Vui lòng nhập số điện thoại.');
+            isValid = false;
+        } else if (!phoneRegex.test(phoneVal)) {
+            showError(phoneInput, 'Số điện thoại không hợp lệ. Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số.');
+            isValid = false;
+        }
+        
+        // Validate address
+        const addressInput = document.getElementById('address');
+        if (!addressInput.value.trim()) {
+            showError(addressInput, 'Vui lòng nhập địa chỉ giao hàng.');
+            isValid = false;
+        }
+        
+        if (isValid) {
+            // Populate modal
+            document.getElementById('confirm-name').textContent = nameInput.value;
+            document.getElementById('confirm-phone').textContent = phoneInput.value;
+            document.getElementById('confirm-address').textContent = addressInput.value;
+            
+            // Payment method
+            const paymentVal = document.querySelector('input[name="payment_method"]:checked').value;
+            const paymentText = paymentVal === 'cod' ? 'COD (Thanh toán khi nhận hàng)' : 'VNPay (Thanh toán Online)';
+            document.getElementById('confirm-payment').textContent = paymentText;
+            
+            // Total amount
+            const totalText = document.querySelector('.summary-row.total span:last-child').textContent;
+            document.getElementById('confirm-total').textContent = totalText;
+            
+            // Show modal
+            modal.style.display = 'flex';
+        }
+    });
+    
+    function showError(inputEl, message) {
+        inputEl.style.borderColor = '#ef4444';
+        const errorEl = document.createElement('div');
+        errorEl.className = 'error-feedback';
+        errorEl.style.color = '#ef4444';
+        errorEl.style.fontSize = '13px';
+        errorEl.style.marginTop = '6px';
+        errorEl.style.fontWeight = '600';
+        errorEl.textContent = message;
+        inputEl.parentNode.appendChild(errorEl);
+    }
+    
+    document.getElementById('modal-cancel-btn').addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    document.getElementById('modal-submit-btn').addEventListener('click', function() {
+        modal.style.display = 'none';
+        form.submit();
     });
 </script>
 @endsection

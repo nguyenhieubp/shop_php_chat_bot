@@ -303,6 +303,12 @@ class BotManController extends Controller
                     $step = 'askProduct';
                 } elseif ($step === 'askTrackPhone') {
                     $phone = trim($message);
+                    if (!preg_match('/^0[0-9]{9}$/', $phone)) {
+                        $bot->reply('⚠️ Số điện thoại không hợp lệ. Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số (Ví dụ: 0901234567).');
+                        $question = Question::create(BotSetting::get('bot_ask_track_phone', 'Vui lòng nhập số điện thoại bạn đã dùng để đặt hàng:'))
+                            ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                        return $bot->reply($question);
+                    }
                     $orders = Order::with('product')->where('phone', $phone)->latest()->take(3)->get();
                     if ($orders->isEmpty()) {
                         $bot->reply(BotSetting::get('bot_order_not_found', 'Rất tiếc, tôi không tìm thấy đơn hàng nào với số điện thoại này. 😢'));
@@ -324,8 +330,14 @@ class BotManController extends Controller
                     $request->session()->forget(['botman_step', 'botman_state']);
                     return;
                 } elseif ($step === 'askFeedbackPhone') {
-                    if (trim($message) === '') return $bot->reply('Vui lòng nhập số điện thoại:');
-                    $state['feedbackPhone'] = $message;
+                    $phone = trim($message);
+                    if (!preg_match('/^0[0-9]{9}$/', $phone)) {
+                        $bot->reply('⚠️ Số điện thoại không hợp lệ. Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số (Ví dụ: 0901234567).');
+                        $question = Question::create('Vui lòng nhập lại số điện thoại của bạn:')
+                            ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                        return $bot->reply($question);
+                    }
+                    $state['feedbackPhone'] = $phone;
                     $step = 'askFeedbackMessage';
                 } elseif ($step === 'askFeedbackMessage') {
                     Feedback::create([
@@ -363,8 +375,14 @@ class BotManController extends Controller
                     $state['customerName'] = $message;
                     $step = 'askPhone';
                 } elseif ($step === 'askPhone') {
-                    if (trim($message) === '') return $bot->reply('Vui lòng nhập số điện thoại:');
-                    $state['customerPhone'] = $message;
+                    $phone = trim($message);
+                    if (!preg_match('/^0[0-9]{9}$/', $phone)) {
+                        $bot->reply('⚠️ Số điện thoại không hợp lệ. Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số (Ví dụ: 0901234567).');
+                        $question = Question::create('Vui lòng nhập lại số điện thoại nhận hàng:')
+                            ->addButtons([Button::create('⬅️ Quay lại')->value('back')]);
+                        return $bot->reply($question);
+                    }
+                    $state['customerPhone'] = $phone;
                     $step = 'askAddress';
                 } elseif ($step === 'askAddress') {
                     $state['customerAddress'] = $message;

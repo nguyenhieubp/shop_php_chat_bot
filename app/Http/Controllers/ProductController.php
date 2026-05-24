@@ -21,11 +21,12 @@ class ProductController extends Controller
     }
 
     public function storeOrder(Request $request)
-    {
         $request->validate([
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'regex:/^0[0-9]{9}$/'],
             'customer_name' => 'required|string|max:255',
             'payment_method' => 'required|in:cod,vnpay',
+        ], [
+            'phone.regex' => 'Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số.',
         ]);
 
         $orderIds = [];
