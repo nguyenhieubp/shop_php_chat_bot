@@ -13,7 +13,7 @@
             --primary-dark: #333333;
             --secondary: #f8fafc;
             --accent: #ff0000;
-            --bg: #ffffff;
+            --bg: #eeeee4;
             --surface: #ffffff;
             --text: #000000;
             --text-muted: #666666;
