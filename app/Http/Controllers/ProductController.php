@@ -21,6 +21,7 @@ class ProductController extends Controller
     }
 
     public function storeOrder(Request $request)
+    {
         $request->validate([
             'phone' => ['required', 'string', 'regex:/^0[0-9]{9}$/'],
             'customer_name' => 'required|string|max:255',
