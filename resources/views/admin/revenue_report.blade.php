@@ -411,7 +411,7 @@
             <tbody>
                 @forelse($orders as $order)
                 @php
-                    $isRevenue = ($order->payment_status === 'paid' || $order->status === 'completed');
+                    $isRevenue = ($order->payment_status === 'paid');
                 @endphp
                 <tr>
                     <td style="font-weight: 800; color: #1e293b;">#{{ $order->id }}</td>
