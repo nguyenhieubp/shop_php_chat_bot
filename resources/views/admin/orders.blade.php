@@ -129,11 +129,17 @@
         padding-right: 24px;
         transition: var(--transition);
     }
-    .payment-select.paid { background: #ecfdf5; color: #059669; }
-    .payment-select.pending { background: #fffbeb; color: #b45309; }
-    .payment-select.failed { background: #fef2f2; color: #dc2626; }
-    .payment-select.failed { background: #fef2f2; color: #dc2626; }
-    .payment-select:hover { filter: brightness(0.95); }
+     .payment-select.paid { background: #ecfdf5; color: #059669; }
+     .payment-select.pending { background: #fffbeb; color: #b45309; }
+     .payment-select.failed { background: #fef2f2; color: #dc2626; }
+     .payment-select:hover { filter: brightness(0.95); }
+     .payment-select:disabled {
+         opacity: 0.65;
+         cursor: not-allowed;
+         background-image: none;
+         padding-right: 12px;
+         filter: none;
+     }
 
     /* Pagination Styles */
     .pagination-wrapper {
@@ -350,40 +356,41 @@
     </a>
 </div>
 
-<form method="GET" action="{{ route('admin.orders') }}" id="searchForm" style="margin: 0;">
-    <div class="card" style="padding: 0; overflow-x: auto; border-radius: 20px;">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th style="width: 140px;">Thời gian</th>
-                    <th style="width: 180px;">Thông tin khách</th>
-                    <th>Sản phẩm & Giá</th>
-                    <th style="width: 140px;">Thanh toán</th>
-                    <th style="width: 150px;">Trạng thái</th>
-                    <th style="text-align: right; padding-right: 20px; width: 220px;">Xử lý</th>
-                </tr>
-                <tr class="search-row">
-                    <th><input type="date" name="search_date" class="column-search" value="{{ request('search_date') }}"></th>
-                    <th><input type="text" name="search_customer" class="column-search" placeholder="Tìm tên/SĐT/địa chỉ..." value="{{ request('search_customer') }}"></th>
-                    <th><input type="text" name="search_product" class="column-search" placeholder="Tìm sản phẩm..." value="{{ request('search_product') }}"></th>
-                    <th></th>
-                    <th>
-                        <select name="filter_status" class="column-search" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; font-weight: 700; background: white; cursor: pointer; transition: all 0.15s ease-in-out;">
-                            <option value="">Tất cả</option>
-                            <option value="new" @if(request('filter_status') == 'new') selected @endif>Mới nhận</option>
-                            <option value="pending" @if(request('filter_status') == 'pending') selected @endif>Đang xử lý</option>
-                            <option value="completed" @if(request('filter_status') == 'completed') selected @endif>Đã hoàn thành</option>
-                        </select>
-                    </th>
-                    <th style="background: #f8fafc; text-align: center; vertical-align: middle;">
-                        @if(request()->anyFilled(['search_date', 'search_customer', 'search_product', 'filter_status']))
-                            <a href="{{ route('admin.orders') }}" class="btn btn-sm" style="background: #f1f5f9; color: #475569; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; justify-content: center; box-shadow: var(--shadow-sm);">
-                                <i class="fa-solid fa-xmark"></i> Xóa lọc
-                            </a>
-                        @endif
-                    </th>
-                </tr>
-            </thead>
+<form method="GET" action="{{ route('admin.orders') }}" id="searchForm" style="display: none;"></form>
+
+<div class="card" style="padding: 0; overflow-x: auto; border-radius: 20px;">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th style="width: 140px;">Thời gian</th>
+                <th style="width: 180px;">Thông tin khách</th>
+                <th>Sản phẩm & Giá</th>
+                <th style="width: 140px;">Thanh toán</th>
+                <th style="width: 150px;">Trạng thái</th>
+                <th style="text-align: right; padding-right: 20px; width: 220px;">Xử lý</th>
+            </tr>
+            <tr class="search-row">
+                <th><input type="date" name="search_date" class="column-search" value="{{ request('search_date') }}" form="searchForm"></th>
+                <th><input type="text" name="search_customer" class="column-search" placeholder="Tìm tên/SĐT/địa chỉ..." value="{{ request('search_customer') }}" form="searchForm"></th>
+                <th><input type="text" name="search_product" class="column-search" placeholder="Tìm sản phẩm..." value="{{ request('search_product') }}" form="searchForm"></th>
+                <th></th>
+                <th>
+                    <select name="filter_status" class="column-search" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; font-weight: 700; background: white; cursor: pointer; transition: all 0.15s ease-in-out;" form="searchForm">
+                        <option value="">Tất cả</option>
+                        <option value="new" @if(request('filter_status') == 'new') selected @endif>Mới nhận</option>
+                        <option value="pending" @if(request('filter_status') == 'pending') selected @endif>Đang xử lý</option>
+                        <option value="completed" @if(request('filter_status') == 'completed') selected @endif>Đã hoàn thành</option>
+                    </select>
+                </th>
+                <th style="background: #f8fafc; text-align: center; vertical-align: middle;">
+                    @if(request()->anyFilled(['search_date', 'search_customer', 'search_product', 'filter_status']))
+                        <a href="{{ route('admin.orders') }}" class="btn btn-sm" style="background: #f1f5f9; color: #475569; padding: 6px 12px; font-size: 11px; border-radius: 6px; border: 1px solid #cbd5e1; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; justify-content: center; box-shadow: var(--shadow-sm);">
+                            <i class="fa-solid fa-xmark"></i> Xóa lọc
+                        </a>
+                    @endif
+                </th>
+            </tr>
+        </thead>
         <tbody>
             @forelse($orders as $order)
             <tr>
@@ -421,7 +428,7 @@
                     </div>
                     <form action="{{ route('admin.order.update', $order->id) }}" method="POST">
                         @csrf
-                        <select name="payment_status" class="payment-select {{ $order->payment_status }}" onchange="this.form.submit()">
+                        <select name="payment_status" class="payment-select {{ $order->payment_status }}" onchange="this.form.submit()" @if($order->status !== 'completed') disabled title="Chỉ có thể thay đổi trạng thái thanh toán khi đơn hàng đã hoàn thành" @endif>
                             <option value="pending" @if($order->payment_status == 'pending') selected @endif>Chờ TT</option>
                             <option value="paid" @if($order->payment_status == 'paid') selected @endif>Đã thanh toán</option>
                             <option value="failed" @if($order->payment_status == 'failed') selected @endif>Thất bại</option>
@@ -482,13 +489,12 @@
     </div>
     @endif
 </div>
-</form>
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('searchForm');
-        const inputs = form.querySelectorAll('.column-search');
+        const inputs = document.querySelectorAll('.column-search');
         
         inputs.forEach(input => {
             // Trigger search on change event (e.g. date select, status select or blur for text inputs)
