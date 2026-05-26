@@ -654,7 +654,7 @@ class AdminController extends Controller
             foreach ($orders as $order) {
                 $hour = (int)$order->created_at->format('H');
                 $orderCountData[$hour]++;
-                if ($order->payment_status === 'paid' || $order->status === 'completed') {
+                if ($order->payment_status === 'paid') {
                     $revenueData[$hour] += (float)$order->total_amount;
                     $completedCount[$hour]++;
                 }
@@ -708,7 +708,7 @@ class AdminController extends Controller
                 $dayStr = $order->created_at->format('Y-m-d');
                 if (isset($revenueData[$dayStr])) {
                     $orderCountData[$dayStr]++;
-                    if ($order->payment_status === 'paid' || $order->status === 'completed') {
+                    if ($order->payment_status === 'paid') {
                         $revenueData[$dayStr] += (float)$order->total_amount;
                         $completedCount[$dayStr]++;
                     }
@@ -761,7 +761,7 @@ class AdminController extends Controller
                 $monthStr = $order->created_at->format('Y-m');
                 if (isset($revenueData[$monthStr])) {
                     $orderCountData[$monthStr]++;
-                    if ($order->payment_status === 'paid' || $order->status === 'completed') {
+                    if ($order->payment_status === 'paid') {
                         $revenueData[$monthStr] += (float)$order->total_amount;
                         $completedCount[$monthStr]++;
                     }
@@ -809,7 +809,7 @@ class AdminController extends Controller
                 $yearStr = $order->created_at->format('Y');
                 if (isset($revenueData[$yearStr])) {
                     $orderCountData[$yearStr]++;
-                    if ($order->payment_status === 'paid' || $order->status === 'completed') {
+                    if ($order->payment_status === 'paid') {
                         $revenueData[$yearStr] += (float)$order->total_amount;
                         $completedCount[$yearStr]++;
                     }
@@ -902,7 +902,7 @@ class AdminController extends Controller
         
         // Revenue is calculated only for orders with payment_status === 'paid' or status === 'completed'
         $revenueOrders = $orders->filter(function($o) {
-            return $o->payment_status === 'paid' || $o->status === 'completed';
+            return $o->payment_status === 'paid';
         });
         $totalRevenue = $revenueOrders->sum('total_amount');
         
@@ -972,7 +972,7 @@ class AdminController extends Controller
         ];
 
         foreach ($orders as $order) {
-            $isRevenue = ($order->payment_status === 'paid' || $order->status === 'completed');
+            $isRevenue = ($order->payment_status === 'paid');
             $revenueContribution = $isRevenue ? (float)$order->total_amount : 0;
 
             $payStatusText = 'Chờ thanh toán';
@@ -1013,7 +1013,7 @@ class AdminController extends Controller
         })->filter()->unique()->count();
         $totalOrdersCount = $orders->count();
         $totalRev = $orders->filter(function($o) {
-            return $o->payment_status === 'paid' || $o->status === 'completed';
+            return $o->payment_status === 'paid';
         })->sum('total_amount');
 
         // Add footer report totals

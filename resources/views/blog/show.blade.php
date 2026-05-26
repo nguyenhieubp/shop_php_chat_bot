@@ -5,7 +5,7 @@
 @section('styles')
 <style>
     .post-header {
-        padding: 100px 0 60px;
+        padding: 100px 0 80px;
         text-align: center;
         background: var(--bg);
     }
@@ -27,6 +27,8 @@
         font-size: 48px;
         line-height: 1.2;
         margin-bottom: 30px;
+        color: #000000;
+        padding-bottom: 15px;
     }
 
     .post-hero-img {
