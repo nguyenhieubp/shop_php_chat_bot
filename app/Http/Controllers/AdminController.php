@@ -58,10 +58,37 @@ class AdminController extends Controller
         return view('admin.products', compact('products', 'categories'));
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
         if (!Session::has('admin_logged_in')) return redirect()->route('admin.login');
-        $orders = Order::with('product')->latest()->paginate(10);
+        
+        $query = Order::with('product');
+        
+        if ($request->filled('search_date')) {
+            $query->whereDate('created_at', $request->search_date);
+        }
+        
+        if ($request->filled('search_customer')) {
+            $search = $request->search_customer;
+            $query->where(function($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('address', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('search_product')) {
+            $search = $request->search_product;
+            $query->whereHas('product', function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
+        
+        if ($request->filled('filter_status')) {
+            $query->where('status', $request->filter_status);
+        }
+        
+        $orders = $query->latest()->paginate(10)->withQueryString();
         return view('admin.orders', compact('orders'));
     }
 
@@ -390,7 +417,14 @@ class AdminController extends Controller
         
         $data = [];
         if ($request->has('status')) $data['status'] = $request->status;
-        if ($request->has('payment_status')) $data['payment_status'] = $request->payment_status;
+        
+        if ($request->has('payment_status')) {
+            if ($order->status === 'completed') {
+                $data['payment_status'] = $request->payment_status;
+            } else {
+                return back()->with('error', 'Chỉ có thể thay đổi trạng thái thanh toán khi đơn hàng đã ở trạng thái Hoàn thành!');
+            }
+        }
         
         $order->update($data);
         return back()->with('success', 'Đơn hàng đã được cập nhật!');
